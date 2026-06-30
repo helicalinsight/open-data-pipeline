@@ -1,6 +1,6 @@
 # OpenDataPipeline
 
-[OpenDataPipeline](https://app.askondata.com/) is an open-source platform that empowers data engineers and analysts to intuitively move, transform, and schedule data using AI.
+[OpenDataPipeline](https://askondata.com/) is an open-source platform that empowers data engineers and analysts to intuitively move, transform, and schedule data using AI.
 
 ## Get started
 
