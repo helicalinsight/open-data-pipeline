@@ -1,0 +1,85 @@
+FROM python:3.9-slim
+
+# Install system dependencies 
+RUN apt-get update && \
+    (apt-get install -y libaio1 || apt-get install -y libaio1t64) && \
+    apt-get install -y \
+    gcc \
+    g++ \
+    unzip \
+    curl \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Ensure symlink for libaio.so.1 exists (required for Oracle Instant Client on newer Debian/Ubuntu)
+RUN if [ ! -f /usr/lib/x86_64-linux-gnu/libaio.so.1 ] && [ -f /usr/lib/x86_64-linux-gnu/libaio.so.1t64 ]; then \
+        ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/x86_64-linux-gnu/libaio.so.1; \
+    fi
+
+# Env variables for Oracle client libraries
+ENV ORACLE_HOME=/opt/oracle/instantclient
+ENV LD_LIBRARY_PATH=$ORACLE_HOME
+ENV PATH=$ORACLE_HOME:$PATH
+
+# Install firebird client
+RUN apt-get update && apt-get install -y \
+    libfbclient2 \
+    firebird-dev \
+    firebird3.0-common \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN echo "/usr/lib/firebird/lib" > /etc/ld.so.conf.d/firebird.conf \
+&& ldconfig
+
+# Download and install Oracle Instant Client
+RUN curl -L -o instantclient-basic-linux.x64.zip https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linuxx64.zip \
+    && mkdir -p /opt/oracle \
+    && unzip instantclient-basic-linux.x64.zip -d /opt/oracle/ \
+    && rm instantclient-basic-linux.x64.zip \
+    && a=`ls -1 /opt/oracle | grep "instantclient_"` \
+    && ln -s /opt/oracle/$a /opt/oracle/instantclient
+
+## INSTALL MS SQL ODBC REQUIREMENTS
+# Download and install ODBC driver
+# 1. Install prerequisites
+RUN apt-get update && apt-get install -y curl gnupg ca-certificates apt-transport-https
+
+# 2. Add Microsoft's repository for the SQL Server Driver (Debian 11 example)
+RUN curl https://packages.microsoft.com/keys/microsoft.asc \
+        | gpg --dearmor \
+        > /usr/share/keyrings/microsoft-prod.gpg
+
+RUN echo "deb [signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/debian/11/prod bullseye main" \
+    > /etc/apt/sources.list.d/microsoft-prod.list
+
+# 3. Install unixODBC and the Microsoft ODBC Driver 18
+RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
+    unixodbc \
+    unixodbc-dev \
+    msodbcsql18 \
+    mssql-tools18
+
+# 4. Add the tools to your PATH (helpful for debugging)
+RUN echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
+
+# Set working directory
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p /app/data /app/.dlt /app/logs
+
+# Set environment variables
+ENV PYTHONPATH=/app
+ENV DLT_PROJECT_DIR=/app/.dlt
+
+# Make the runner executable
+RUN chmod +x dlt_runner.py
+
+# Default command
+CMD ["python", "dlt_runner.py"]

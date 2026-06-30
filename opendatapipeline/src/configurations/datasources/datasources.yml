@@ -1,0 +1,904 @@
+datasources:
+
+  - driver: flat_files
+    name: Flat Files
+    verified: true
+    categoryName: Flat File
+    categoryType: Flat Files
+    available: true
+    is_valid_dms_source: true
+
+  - driver: cassandra
+    name: Cassandra
+    verified: true
+    connector_type: native 
+    spark: spark-cassandra-connector_2.12-3.3.0
+    categoryName: Big Data
+    categoryType: nosql
+    available: true
+    description: |
+        # Cassandra Connector Documentation
+        
+        The Cassandra Connector allows you to establish a connection between your application and a Cassandra database. This connector facilitates the seamless interaction and data exchange between your application and the Cassandra database.
+        
+        ## Required Fields
+        
+        To successfully configure the Cassandra Connector, you need to provide the following essential information:
+
+        1. **Host:**
+           - The hostname or IP address of the machine where your Cassandra database is hosted.
+        
+        2. **Username:**
+           - The username used to authenticate and access the Cassandra database.
+        
+        3. **Password:**
+           - The password associated with the provided username for authentication.
+        
+        4. **Port:**
+           - The port number on which the Cassandra database is listening for connections.
+        
+
+    parameters:
+      basic_auth: [{ "name":"Host","variable":"host", "default":"localhost","type":"string","category":"input"},
+        { "name":"Port","variable":"port", "default":"5042","type":"int","category":"input"},
+                   { "name":"Username","variable":"username", "default":'',"type":"string","category":"input"},
+                   { "name": "Password","variable": "password", "default": '',"type": "password","category": "input" }]
+
+  - driver: astra
+    name: Astra
+    verified: true
+    pooling: true
+    connector_type: native
+    spark: spark-cassandra-connector_2.12-3.3.0
+    categoryName: AI Database
+    categoryType: nosql
+    available: true
+    description: |
+        # Astra Connector Documentation
+        
+        The Astra Connector allows you to establish a connection between your application and a Astra database. This connector facilitates the seamless interaction and data exchange between your application and the Astra database.
+        
+        ## Required Fields
+        
+        To successfully configure the Astra Connector, you need to provide the following essential information:
+
+        1. **Client ID:**
+           - The client ID for authenticating with the Astra database.
+        
+        2. **Secret Key:**
+           - The secret key associated with the provided client ID for authentication.
+        
+        3. **Upload Bundle:**
+           - The secure connection bundle required to establish a connection with the Astra database.
+        
+        ## Obtaining Credentials
+
+         To obtain the necessary credentials (Client ID, Secret Key and Bundle) for accessing your Astra database, follow these steps:
+
+         1. **Sign Up or Log In to Astra:**
+            - Go to the [Astra Portal](https://astra.datastax.com/) website and sign up for a new account or log in to your existing account.
+
+         2. **Create a New Database or use existing database:**
+            - After logging in, create a new database by following the on-screen instructions if it is not created yet ( you can use existing one).
+
+         3. **Generate Client ID:**
+            - In the Astra Portal, go to Tokens .
+            - Select the role you want to attach to your token. The permissions for the selected role are shown.
+            - Select Generate Token to generate a Client ID, Client Secret, and Token.
+            - Download your token details by clicking download token details which will be in the json format.
+            - The json file has Client ID, Client Secret, and Token. 
+
+         4. **Download Secure Connection Bundle:**
+            - Select your database and On the Overview page, select Connect.
+            - In the Database Essentials section, click Get Bundle.
+            - In the Secure Connect Bundle Download dialog box, use the Select a region dropdown menu to select the region for which you want to download the bundle. If you have multiple regions, you can download a bundle for each region.
+            - To download the bundle to your local computer, click Download Secure Bundle.
+            - The secure connect bundle downloads as a ZIP file named secure-connect-<database_name>.zip.
+
+         By following these steps, you can obtain the necessary credentials to configure the Astra Connector and establish a secure connection to your Astra database. 
+
+        ## Pooling Options
+          
+          **To provide pooling options you can refer this documentation:**
+               - [Pooling Options for astra](https://docs.datastax.com/en/developer/python-driver/3.29/api/cassandra/cluster/index.html)
+
+    parameters:
+      basic_auth: [{ "name":"Client ID","variable":"client_id", "default":"","type":"string","category":"input"},
+                   { "name":"Secret Key","variable":"secret", "default":"","type":"password","category":"input"},
+        { "name":"Upload Bundle","variable":"bundle", "default":None,"type":"file","required":['zip'],"category":"upload"}]
+
+  - driver: postgres
+    name: Postgres
+    verified: true
+    pooling: true
+    connector_type: sqlalchemy
+    spark: postgresql-42.7.1
+    categoryName: RDBMS
+    categoryType: sql
+    available: true
+    is_valid_dms_source: true
+    is_valid_dms_destination: true
+    connection_string: {
+      "driver": "postgresql+psycopg2",
+      "username": None,
+      "password": None,
+      "host": None,
+      "port": None,
+      "database": None}
+    description: |
+        # PostgreSQL Connector Documentation
+        
+        The PostgreSQL Connector allows you to establish a connection between your application and a PostgreSQL database. This connector facilitates the seamless interaction and data exchange between your application and the PostgreSQL database.
+        
+        ## Required Fields
+        
+        To successfully configure the PostgreSQL Connector, you need to provide the following essential information:
+        
+        1. **Host:**
+           - The hostname or IP address of the machine where your PostgreSQL database is hosted.
+        
+        2. **Username:**
+           - The username used to authenticate and access the PostgreSQL database.
+        
+        3. **Password:**
+           - The password associated with the provided username for authentication.
+        
+        4. **Port:**
+           - The port number on which the PostgreSQL database is listening for connections.
+        
+        5. **Database:**
+           - The name of the PostgreSQL database you want to connect to.
+        
+        ## Pooling Options
+
+         **Pooling options for PostgreSQL:**
+
+         **`pool_size`:**
+         - Specifies the number of connections to maintain in the pool. Default is 5.
+
+         **`max_overflow`:**
+         - Controls the number of connections that can be created beyond the pool size. Default is 10.
+
+         **`pool_timeout`:**
+         - Defines the number of seconds to wait before giving up on getting a connection from the pool. Default is 30 seconds.
+
+         **`pool_recycle`:**
+         - Determines the number of seconds after which a connection will be recycled. This helps to prevent potential connection leaks. Default is -1 (no recycling).
+
+         **`poolclass`:**
+         - Allows you to specify a custom pool class. The default pool class is `QueuePool`.
+
+         **Metadata Configurations:**
+
+         **`aod_schema`:**
+         - Allows you to specify which `schema` to choose in Postgres. This helps make listing catalog faster. The value is taken as a list of schema names. E.g `{"aod_schema": ["schema1"]}`.
+
+         **`aod_table`:**
+         - Allows you to specify which `tables` to target in Postgres. This helps make listing catalog faster. Only tables that are present in database and in aod_table would show up in catalog. E.g `{"aod_table": ["table1", "table2"]}`.
+         
+         For more detailed information on these parameters, refer to the [Postgres Pooling Documentation](https://docs.sqlalchemy.org/en/20/core/pooling.html).
+
+
+    parameters:
+      basic_auth: [{ "name":"Host","variable":"host", "default":"localhost","type":"string","category":"input"},
+        { "name":"Port","variable":"port", "default":5432,"type":"int","category":"input"},
+                   { "name":"Username","variable":"username", "default":'',"type":"string","category":"input"},
+                   { "name": "Password","variable": "password", "default": '',"type": "password","category": "input" },
+        { "name":"Database","variable":"database", "default":"","type":"string","category":"input"}]
+
+  - driver: snowflake
+    name: Snowflake
+    verified: true
+    pooling: true
+    connector_type: sqlalchemy
+    spark:
+      - snowflake-jdbc-3.13.30
+      - spark-snowflake_2.12-2.12.0-spark_3.3
+    categoryName: Data Lake
+    categoryType: Cloud
+    is_valid_dms_source: true
+    is_valid_dms_destination: true
+    available: true
+    connection_string: {
+      "driver": "snowflake",
+      "username": None,
+      "password": None,
+      "account": None,
+      "database": None,
+      "schema": None,
+      "warehouse": None,
+      "role": None}
+    description: |
+        # Snowflake Connector Documentation
+
+        The Snowflake Connector allows you to establish a connection between your application and a snowflake database. This connector facilitates the seamless interaction and data exchange between your application and the snowflake database.
+
+        ## Required Fields
+
+        To successfully configure the Snowflake Connector, you need to provide the following essential information:
+
+        1. **Username:**
+           - The username used to authenticate and access the Snowflake database.
+
+        2. **Password:**
+           - The password associated with the provided username for authentication.
+
+        3. **Account Identifier:**
+           - The account identifier is the unique identifier associated with the Snowflake database for connections.
+           For example, your account identifier should be formatted as
+
+           - **orgname-account_name**
+            
+           If the orgname is "helical" and the account_name is "NM101", then the account identifier will be:
+           - **helical-NM101**
+           
+           **For detailed guide check below documentation:**
+               - [Account Identifier syntax reference](https://docs.snowflake.com/en/sql-reference/identifiers-syntax)
+            
+        4. **Database:**
+            - The name of the Snowflake database you want to connect to.
+
+        5. **Warehouse:**
+            - The name of the Snowflake warehouse (virtual compute cluster) that will provide the computational resources for executing queries and data operations. The warehouse must be running to process queries.
+
+        ## Pooling Options
+
+         **Pooling options for Snowflake:**
+
+         **`pool_size`:**
+         - Specifies the number of connections to maintain in the pool. Default is 5.
+
+         **`max_overflow`:**
+         - Controls the number of connections that can be created beyond the pool size. Default is 10.
+
+         **`pool_timeout`:**
+         - Defines the number of seconds to wait before giving up on getting a connection from the pool. Default is 30 seconds.
+
+         **`pool_recycle`:**
+         - Determines the number of seconds after which a connection will be recycled. This helps to prevent potential connection leaks. Default is -1 (no recycling).
+
+         **`poolclass`:**
+         - Allows you to specify a custom pool class. The default pool class is `QueuePool`.
+
+         **Metadata Configurations:**
+
+         **`aod_schema`:**
+         - Allows you to specify which `schema` to choose in Snowflake. This helps make listing catalog faster. The value is taken as a list of schema names. E.g `{"aod_schema": ["schema1"]}`.
+
+         **`aod_table`:**
+         - Allows you to specify which `tables` to target in Snowflake. This helps make listing catalog faster. Only tables that are present in database and in aod_table would show up in catalog. E.g `{"aod_table": ["table1", "table2"]}`.
+         
+         For more detailed information on these parameters, refer to the [Snowflake Pooling Documentation](https://docs.sqlalchemy.org/en/20/core/pooling.html).
+
+
+    parameters:
+      basic_auth: [{ "name":"Username","variable":"sfUser", "default":'',"type":"string","category":"input"},
+                   { "name":"Password","variable": "sfPassword", "default": '',"type": "password","category": "input" },
+                   { "name":"Account Identifier","variable":"sfAccountIdentifier", "default":"","type":"string","category":"input"},
+                   { "name":"Database","variable":"sfDatabase", "default":"","type":"string","category":"input"},
+                   { "name":"Warehouse","variable":"warehouse", "default":"","type":"string","category":"input"}]
+
+  - driver: mysql
+    name: MySQL
+    verified: true
+    pooling: true
+    connector_type: sqlalchemy
+    spark: mysql-connector-java-8.0.13
+    categoryName: RDBMS
+    categoryType: sql
+    is_valid_dms_source: true
+    is_valid_dms_destination: true
+    available: true
+    connection_string: {"driver":"mysql+mysqlconnector", "username": None, "password":None, "host":None, "port":None}
+    description: |
+        # MySQL Connector Documentation
+
+        The MySQL Connector allows you to establish a connection between your application and a MySQL database. This connector facilitates the seamless interaction and data exchange between your application and the MySQL database.
+
+        ## Required Fields
+
+        To successfully configure the MySQL Connector, you need to provide the following essential information:
+
+        1. **Username:**
+           - The username used to authenticate and access the MySQL database.
+
+        2. **Password:**
+           - The password associated with the provided username for authentication.
+
+        3. **Hostname:**
+           - The hostname or IP address of the machine where your MySQL database is hosted.
+
+        4. **Port:**
+            - The port number on which the MySQL database is listening for connections.
+
+        5. **Database:**
+            - The name of the MySQL database you want to connect to.
+
+        ## Pooling Options
+
+         **Pooling options for MySQL:**
+
+         **`pool_size`:**
+         - Specifies the number of connections to maintain in the pool. Default is 5.
+
+         **`max_overflow`:**
+         - Controls the number of connections that can be created beyond the pool size. Default is 10.
+
+         **`pool_timeout`:**
+         - Defines the number of seconds to wait before giving up on getting a connection from the pool. Default is 30 seconds.
+
+         **`pool_recycle`:**
+         - Determines the number of seconds after which a connection will be recycled. This helps to prevent potential connection leaks. Default is -1 (no recycling).
+
+         **`poolclass`:**
+         - Allows you to specify a custom pool class. The default pool class is `QueuePool`.
+
+         **Metadata Configurations:**
+
+         **`aod_schema`:**
+         - Allows you to specify which `schema` to choose in MySQL. This helps make listing catalog faster. The value is taken as a list of schema names. E.g `{"aod_schema": ["schema1"]}`.
+
+         **`aod_table`:**
+         - Allows you to specify which `tables` to target in MySQL. This helps make listing catalog faster. Only tables that are present in database and in aod_table would show up in catalog. E.g `{"aod_table": ["table1", "table2"]}`.
+         
+         For more detailed information on these parameters, refer to the [MySQL Pooling Documentation](https://docs.sqlalchemy.org/en/20/core/pooling.html).
+
+
+    parameters:
+      basic_auth: [{ "name":"Username","variable":"username", "default":'',"type":"string","category":"input"},
+                   { "name":"Password","variable": "password", "default": '',"type": "password","category": "input" },
+                   { "name":"Hostname","variable":"host", "default":"","type":"string","category":"input"},
+                   { "name":"Port","variable":"port", "default":"3306","type":"string","category":"input"},
+                   { "name":"Database","variable":"database", "default":"","type":"string","category":"input"}]
+
+  - driver: redshift
+    name: Amazon Redshift
+    verified: true
+   #  pooling: true
+    categoryName: Data Warehouse
+    connector_type: native
+    categoryType: Cloud
+    is_valid_dms_source: true
+    is_valid_dms_destination: true
+    available: true
+    connection_string: {
+      "driver": "redshift+psycopg2",
+      "username": None,
+      "password": None,
+      "host": None,
+      "port": None,
+      "database": None}
+    description: |
+        # Redshift Connector Documentation
+
+        The Redshift Connector allows you to establish a connection between your application and a redshift database. This connector facilitates the seamless interaction and data exchange between your application and the redshift database.
+
+        ## Required Fields
+
+        To successfully configure the Redshift Connector, you need to provide the following essential information:
+
+        1. **Username:**
+           - The username used to authenticate and access the Redshift database.
+
+        2. **Password:**
+           - The password associated with the provided username for authentication.
+
+        3. **Hostname:**
+           - The hostname or IP address of the machine where your redshift database is hosted.
+
+        4. **Port:**
+            - The port number on which the redshift database is listening for connections.
+
+        5. **Database:**
+            - The name of the Redshift database you want to connect to.
+        
+    
+    parameters:
+        basic_auth: [ { "name": "Username","variable": "username", "default": '',"type": "string","category": "input" },
+                      { "name": "Password","variable": "password", "default": '',"type": "password","category": "input" },
+                      { "name": "Hostname","variable": "host", "default": "","type": "string","category": "input" },
+                      { "name": "Port","variable": "port", "default": "","type": "string","category": "input" },
+                      { "name": "Database","variable": "database", "default": "","type": "string","category": "input" } ]
+
+  - driver: bigquery
+    name: Google BigQuery
+    categoryName: Data Warehouse
+    categoryType: Cloud
+    available: false
+    is_valid_dms_source: true
+    is_valid_dms_destination: true
+
+
+  - driver: firebird
+    name: Firebird
+    verified: true
+    categoryName: Data Warehouse
+    categoryType: sql
+    connector_type: sqlalchemy
+    connection_string: {"driver":"firebird+firebird", "username": None, "password":None, "host":None, "port":None}
+    is_valid_dms_source: true
+    is_valid_dms_destination: false
+    available: true
+    description: |
+        # Firebird Connector Documentation
+
+        The Firebird Connector allows you to establish a connection between your application and a firebird database. This connector facilitates the seamless interaction and data exchange between your application and the firebird database.
+
+        ## Required Fields
+
+        To successfully configure the Firebird Connector, you need to provide the following essential information:
+
+        1. **Username:**
+           - The username used to authenticate and access the Firebird database.
+
+        2. **Password:**
+           - The password associated with the provided username for authentication.
+
+        3. **Hostname:**
+           - The hostname or IP address of the machine where your firebird database is hosted.
+
+        4. **Port:**
+            - The port number on which the firebird database is listening for connections.
+
+        5. **Database:**
+            - The name of the Firebird database you want to connect to.
+
+        ## Pooling Options
+
+         **Pooling options for Firebird:**
+
+         **`pool_size`:**
+         - Specifies the number of connections to maintain in the pool. Default is 5.
+
+         **`max_overflow`:**
+         - Controls the number of connections that can be created beyond the pool size. Default is 10.
+
+         **`pool_timeout`:**
+         - Defines the number of seconds to wait before giving up on getting a connection from the pool. Default is 30 seconds.
+
+         **`pool_recycle`:**
+         - Determines the number of seconds after which a connection will be recycled. This helps to prevent potential connection leaks. Default is -1 (no recycling).
+
+         **`poolclass`:**
+         - Allows you to specify a custom pool class. The default pool class is `QueuePool`.
+
+         **Metadata Configurations:**
+
+         **`aod_schema`:**
+         - Allows you to specify which `schema` to choose in Firebird. This helps make listing catalog faster. The value is taken as a list of schema names. E.g `{"aod_schema": ["schema1"]}`.
+
+         **`aod_table`:**
+         - Allows you to specify which `tables` to target in Firebird. This helps make listing catalog faster. Only tables that are present in database and in aod_table would show up in catalog. E.g `{"aod_table": ["table1", "table2"]}`.
+          
+         
+         For more detailed information on these parameters, refer to the [Firebird Pooling Documentation](https://docs.sqlalchemy.org/en/20/core/pooling.html).
+
+
+
+    parameters:
+        basic_auth: [ { "name": "Username","variable": "username", "default": '',"type": "string","category": "input" },
+                      { "name": "Password","variable": "password", "default": '',"type": "password","category": "input" },
+                      { "name": "Hostname","variable": "host", "default": "","type": "string","category": "input" },
+                      { "name": "Port","variable": "port", "default": "3050","type": "string","category": "input" },
+                      { "name": "Database","variable": "database", "default": "","type": "string","category": "input" } ]
+    pooling: true
+    
+  - driver: ms_sql_server
+    name: Microsoft SQL Server
+    verified: true
+    pooling: true
+    connector_type: sqlalchemy
+    categoryName: RDBMS
+    categoryType: sql
+    is_valid_dms_source: true
+    is_valid_dms_destination: true
+    available: true
+    connection_string: {"driver":"mssql+pyodbc", "username": None, "password":None, "host":None, "port":None, "driver_name": "ODBC Driver 18 for SQL Server"}
+    description: |
+        # MS SQL Connector Documentation
+
+        The MS SQL Connector allows you to establish a connection between your application and a MS SQL server. This connector facilitates the seamless interaction and data exchange between your application and the ms sql server.
+
+        ## Required Fields
+
+        To successfully configure the MS SQL Connector, you need to provide the following essential information:
+
+        1. **Username:**
+           - The username used to authenticate and access the MS SQL server.
+
+        2. **Password:**
+           - The password associated with the provided username for authentication.
+
+        3. **Hostname:**
+           - The hostname or IP address of the machine where your MS SQL server is hosted.
+
+        4. **Port:**
+            - The port number on which the database is listening for connections.
+
+        5. **Database:**
+            - The name of the database you want to connect to.
+      
+        ## Pooling Options
+
+         **Pooling options for MS SQL Server:**
+
+         **`pool_size`:**
+         - Specifies the number of connections to maintain in the pool. Default is 5.
+
+         **`max_overflow`:**
+         - Controls the number of connections that can be created beyond the pool size. Default is 10.
+
+         **`pool_timeout`:**
+         - Defines the number of seconds to wait before giving up on getting a connection from the pool. Default is 30 seconds.
+
+         **`pool_recycle`:**
+         - Determines the number of seconds after which a connection will be recycled. This helps to prevent potential connection leaks. Default is -1 (no recycling).
+
+         **`poolclass`:**
+         - Allows you to specify a custom pool class. The default pool class is `QueuePool`.
+
+         **Metadata Configurations:**
+
+         **`aod_schema`:**
+         - Allows you to specify which `schema` to choose in Microsoft SQL Server. This helps make listing catalog faster. The value is taken as a list of schema names. E.g `{"aod_schema": ["schema1"]}`.
+
+         **`aod_table`:**
+         - Allows you to specify which `tables` to target in Microsoft SQL Server. This helps make listing catalog faster. Only tables that are present in database and in aod_table would show up in catalog. E.g `{"aod_table": ["table1", "table2"]}`.
+          
+         For more detailed information on these parameters, refer to the [MS SQL Server Pooling Documentation](https://docs.sqlalchemy.org/en/20/core/pooling.html).
+
+
+
+    parameters:
+        basic_auth: [ { "name": "Username","variable": "username", "default": '',"type": "string","category": "input" },
+                      { "name": "Password","variable": "password", "default": '',"type": "password","category": "input" },
+                      { "name": "Hostname","variable": "host", "default": "","type": "string","category": "input" },
+                      { "name": "Port","variable": "port", "default": "","type": "string","category": "input" },
+                      { "name": "Database","variable": "database", "default": "","type": "string","category": "input" } ]
+
+  - driver: oracle
+    name: Oracle
+    categoryName: RDBMS
+    verified: true
+    pooling: true
+    connector_type: sqlalchemy
+    categoryType: sql
+    is_valid_dms_source: true
+    is_valid_dms_destination: true
+    available: true
+    connection_string: {"driver":"oracle+cx_oracle", "username": None, "password":None, "host":None, "port":1521}
+    description: |
+        # Oracle Documentation
+
+        The oracle allows you to establish a connection between your application and a oracle database. This connector facilitates the seamless interaction and data exchange between your application and the oracle database.
+
+        ## Required Fields
+
+        To successfully configure the Oracle database Connector, you need to provide the following essential information:
+
+        1. **Username:**
+           - The username used to authenticate and access the oracle database.
+
+        2. **Password:**
+           - The password associated with the provided username for authentication.
+
+        3. **Hostname:**
+           - The hostname or IP address of the machine where your oracle database is hosted.
+
+        4. **Port:**
+            - The port number on which the database is listening for connections.
+
+        5. **Database:**
+            - The name of the database you want to connect to.
+
+        ## Pooling Options
+
+         **Pooling options for Oracle:**
+
+         **`pool_size`:**
+         - Specifies the number of connections to maintain in the pool. Default is 5.
+
+         **`max_overflow`:**
+         - Controls the number of connections that can be created beyond the pool size. Default is 10.
+
+         **`pool_timeout`:**
+         - Defines the number of seconds to wait before giving up on getting a connection from the pool. Default is 30 seconds.
+
+         **`pool_recycle`:**
+         - Determines the number of seconds after which a connection will be recycled. This helps to prevent potential connection leaks. Default is -1 (no recycling).
+
+         **`poolclass`:**
+         - Allows you to specify a custom pool class. The default pool class is `QueuePool`.
+
+         **Metadata Configurations:**
+
+         **`aod_schema`:**
+         - Allows you to specify which `schema` to choose in oracle database. This helps make listing catalog faster. The value is taken as a list of schema names. E.g {"aod_schema": ["schema1"]}.
+
+         **`aod_table`:**
+         - Allows you to specify which `tables` to target in oracle database. This helps make listing catalog faster. Only tables that are present in database and in aod_table would show up in catalog. E.g {"aod_table": ["table1", "table2"]}.
+         
+         For more detailed information on these parameters, refer to the [Oracle Pooling Documentation](https://docs.sqlalchemy.org/en/20/core/pooling.html).
+
+
+    parameters:
+        basic_auth: [ { "name": "Username","variable": "username", "default": '',"type": "string","category": "input" },
+                      { "name": "Password","variable": "password", "default": '',"type": "password","category": "input" },
+                      { "name": "Hostname","variable": "host", "default": "","type": "string","category": "input" },
+                      { "name": "Port","variable": "port", "default": "1521","type": "string","category": "input" },
+                      { "name": "Database","variable": "database", "default": "","type": "string","category": "input" } ]
+
+  - driver: google_sheets
+    name: Google Sheets
+    categoryName: spreadsheet
+    verified: true
+    categoryType: Cloud
+    is_valid_dms_source: true
+    available: true
+    description: |
+        # Google sheet Documentation
+
+        The google sheet allows you to establish a connection between your application and a google sheet. This connector facilitates the seamless interaction and data exchange between your application and the google sheets.
+
+
+        ## Required Fields
+
+        To successfully configure the Google Sheets Connector, you need to provide the following essential information:
+
+        1. **Upload Credentials:**
+           - The credentials file in json format.
+
+        2. **SheetId:**
+           - The id of the google sheet.
+
+        ## Obtaining Credentials
+
+        **Steps to obtain crendtials.json file:**
+
+        1. **Open Google Cloud Console:**
+            - Go to [Google Console.](https://console.developers.google.com)
+
+        2. **Create Project:**
+            - Create a new project or select an existing one.
+
+        3. **Enable the Google Sheets API:**
+            - Navigate to APIs & Services > Library.
+            - Search for "Google Sheets API" and click on it.
+            - Click Enable.
+
+        4. **Create Credentials:**
+            - Navigate to APIs & Services > Credentials.
+            - Click Create Credentials and choose  Service Account
+            
+            **For Service Account:**
+         
+            - Click Service Account.
+            - Provide a name for the service account, service account id and optionally add a description.
+            - Choose the role basic > (e.g., Editor) and create.
+            - Click on the email created on service accounts and create key, select json format and click create.
+            - Now the crendentials.json file will be downloaded.
+            
+        5. **Granting Access Permissions:**
+            - After creating the key, press done and you return to the list of credentials.
+            - As a last step, you need to give permission to access the spreadsheet to the service account.
+            - Copy email address of the service account you’ve created and go to the spreadsheet you want to access 
+              and Press ‘SHARE’ and paste the email address you’ve copied
+         
+        Now you have Google Sheets credentials with access to the spreadsheet.
+
+        **Official Documentation:** [Google Sheets Documentation](https://developers.google.com/sheets)
+
+
+    parameters:
+        basic_auth: [ { "name":"Upload Credentials","variable":"credentials_object", "default":None,"type":"file","required":['json'],"category":"upload"},
+                      { "name": "SheetId","variable": "sheet_id", "default": '',"type": "string","category": "input" }]
+
+  - driver: couchbase
+    name: Couchbase
+    verified: true
+    connector_type: native
+    spark: com.couchbase.client:spark-connector_2.12:3.3.6
+    categoryName: Big Data
+    categoryType: nosql
+    available: true
+    description: |
+      # Couchbase Connector Documentation
+
+      The Couchbase Connector allows you to establish a connection between your application and a Couchbase database. This connector facilitates seamless interaction with the Couchbase NoSQL document database using both key-value operations and N1QL (SQL++) queries.
+
+      ## Required Fields
+
+      To successfully configure the Couchbase Connector, you need to provide the following essential information:
+
+      1. **Host**
+         - Hostname or IP of your Couchbase cluster.
+         - Examples: `localhost`, `couchbase.example.com`, `192.168.1.100`
+      2. **Username**
+         - Couchbase user with appropriate roles for the target bucket/scope/collection.
+      3. **Password**
+         - Password for the above username.
+      4. **Port**
+         - Management port is 8091 (REST/UI). **Note:** The Spark connector itself uses a connection string like `couchbase://<host>`; you generally **do not** append a port there.
+      5. **Bucket**
+         - Target bucket name (similar to a database).
+
+      ## Optional Fields
+
+      6. **Scope**
+         - Scope within the bucket (Couchbase 7.0+). Default: `_default`.
+      7. **Collection**
+         - Collection within the scope (Couchbase 7.0+). Default: `_default`.
+
+      ## IMPORTANT — Running Spark code in the ACE Editor
+
+      The Couchbase Spark connector reads its **required properties at SparkSession creation** (from `SparkConf` on the builder).  
+      Our launcher **extracts credentials from your ACE code before building the SparkSession**. Therefore, in your ACE snippet you **must** declare these constants exactly (case-sensitive):
+
+      ```python
+      # Required (parsed by the launcher → mapped to SparkConf on builder)
+      COUCHBASE_HOST = "YOUR_HOST_OR_IP"        # e.g., "000.00.000.11" (no port)
+      COUCHBASE_USERNAME = "YOUR_USERNAME"
+      COUCHBASE_PASSWORD = "YOUR_PASSWORD"
+      COUCHBASE_BUCKET = "YOUR_BUCKET"
+      ```
+
+      **Mapping performed by the launcher (before `getOrCreate()`)**
+      - `COUCHBASE_HOST` → `spark.couchbase.connectionString = couchbase://<HOST>`
+      - `COUCHBASE_USERNAME` → `spark.couchbase.username`
+      - `COUCHBASE_PASSWORD` → `spark.couchbase.password`
+      - `COUCHBASE_BUCKET` → `spark.couchbase.implicitBucket`
+
+
+      ## Data Access Patterns
+      
+      - **Key-Value Operations:** Direct document access using document IDs
+      - **N1QL Queries:** SQL-like queries for complex data retrieval
+      - **Full-Text Search:** Advanced search capabilities across documents
+      - **Analytics:** OLAP-style queries for business intelligence
+
+      ## Supported Data Types
+
+      - **JSON Documents:** Native support for structured and semi-structured data
+      - **Binary Data:** Support for blob storage
+      - **Counters:** Atomic increment/decrement operations
+      - **Arrays and Objects:** Nested data structures
+
+      **Official documentation:** https://docs.couchbase.com/home/index.html
+    parameters:
+      basic_auth: [
+        { "name":"Host","variable":"host", "default":"localhost","type":"string","category":"input"},
+        { "name":"Port","variable":"port", "default":"8091","type":"int","category":"input"},
+        { "name":"Username","variable":"username", "default":"","type":"string","category":"input"},
+        { "name": "Password","variable": "password", "default": "","type": "password","category": "input" },
+        { "name":"Bucket","variable":"bucket", "default":"default","type":"string","category":"input"}
+      ]
+
+  - driver: s3
+    name: S3
+    verified: true
+    categoryName: Object Storage
+    categoryType: Cloud
+    available: true
+    connection_string: {
+      "driver": "s3",
+      "aws_access_key": None,
+      "aws_secret_key": None,
+      "bucket_name": None,
+      "aws_region": None
+   }
+    description: |
+        # S3 Connector Documentation
+        
+        The S3 Connector allows you to connect to files stored in your Amazon S3 bucket. This enables loading of various data formats such as CSV, Excel, Parquet, Delta, and more into AskOnData.
+
+        ## Required Fields
+        
+        To successfully configure the S3 Connector, you need to provide the following essential information:
+        
+        1. **AWS Access Key ID:**
+        - The access key ID for your AWS IAM credentials with S3 access.
+        
+        2. **AWS Secret Access Key:**
+        - The secret key associated with the access key ID.
+        
+        3. **Bucket Name:**
+        - The name of the S3 bucket that contains your data files.
+        
+        4. **File Path:**
+        - The path to the specific file (including folders if nested) within the bucket.
+        
+        5. **Region:**
+        - The AWS region where the bucket is hosted (e.g., `us-west-2`).
+        
+        ## Supported File Types
+        
+        - `.csv`
+        - `.parquet`
+        - `.xlsx` / `.xls`
+        - `.json`
+        - `.txt`
+        - `.delta` (using Delta Lake)
+        - `.iceberg` (planned support)
+        
+         **Official Documentation:** [Amazon S3 Documentation](https://docs.aws.amazon.com/s3/)
+   
+    parameters:
+            basic_auth: [
+      { "name": "AWS Access Key ID", "variable": "aws_access_key", "default": "", "type": "string", "category": "input" },
+      { "name": "AWS Secret Access Key", "variable": "aws_secret_key", "default": "", "type": "password", "category": "input" },
+      { "name": "Bucket Name", "variable": "bucket_name", "default": "", "type": "string", "category": "input" },
+      { "name": "AWS Region", "variable": "aws_region", "default": "us-east-1", "type": "string", "category": "input" }
+    ]
+
+  - driver: databricks
+    name: Databricks
+    verified: true
+    pooling: true
+    spark: databricks-connector
+    categoryName: Data Warehouse
+    categoryType: sql
+    available: true
+    connection_string: {
+      "driver": "databricks+connector",
+      "username": "token",
+      "password": null,
+      "host": null,
+      "http_path": null,
+      "catalog": null,
+      "schema": null
+   }
+    description: |
+        # Databricks Connector Documentation
+
+        The Databricks connector enables secure and performant access to **Databricks SQL Warehouses** from your application.
+
+        ## Required Fields
+
+        1. **Access Token (`password`):**
+         - A [Databricks personal access token] with access to SQL Warehouse and data.
+
+        2. **Workspace Hostname (`host`):**
+         - The full domain of your Databricks workspace (e.g., `dbc-xxxx.cloud.databricks.com`).
+
+        3. **HTTP Path (`http_path`):**
+         - The SQL warehouse endpoint path. You can get it from the SQL Warehouse details screen.
+
+        4. **Catalog (`catalog`)**
+         - If provided, sets the catalog to use in Unity Catalog-enabled workspaces.
+
+        5. **Schema (`schema`)**
+         - The database schema to query within the selected catalog.
+
+        ## Pooling Options
+
+        **Pooling options for Databricks:**
+
+        **`pool_size`:**
+         - Specifies the number of connections to maintain in the pool. Default is 5.
+
+         **`max_overflow`:**
+         - Controls the number of connections that can be created beyond the pool size. Default is 10.
+
+         **`pool_timeout`:**
+         - Defines the number of seconds to wait before giving up on getting a connection from the pool. Default is 30 seconds.
+
+         **`pool_recycle`:**
+         - Determines the number of seconds after which a connection will be recycled. This helps to prevent potential connection leaks. Default is -1 (no recycling).
+
+         **`poolclass`:**
+         - Allows you to specify a custom pool class. The default pool class is `QueuePool`.
+
+         **`aod_schema`:**
+         - Allows you to specify which `schema` to choose in databricks. This helps make listing catalog faster. The value is taken as a list of schema names. E.g {"aod_schema": ["schema1"]}.
+
+         **`aod_table`:**
+         - Allows you to specify which `tables` to target in databricks schema. This helps make listing catalog faster. Only tables that are present in database and in aod_table would show up in catalog. E.g {"aod_table": ["table1", "table2"]}.
+         
+         For more detailed information on these parameters, refer to the [SQLAlchemy Pooling Documentation](https://docs.sqlalchemy.org/en/20/core/pooling.html).
+
+    parameters:
+      basic_auth: [ { "name": "Access Token", "variable": "access_token", "default": "", "type": "password", "category": "input" },
+                    { "name": "Workspace Hostname", "variable": "host", "default": "", "type": "string", "category": "input" },
+                    { "name": "HTTP Path", "variable": "http_path", "default": "", "type": "string", "category": "input" },
+                    { "name": "Catalog", "variable": "catalog", "default": "", "type": "string", "category": "input" },
+                    { "name": "Schema", "variable": "schema", "default": "", "type": "string", "category": "input" }]

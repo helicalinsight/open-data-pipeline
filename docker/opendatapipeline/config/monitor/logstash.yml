@@ -1,0 +1,2 @@
+http.host: 0.0.0.0
+xpack.monitoring.elasticsearch.hosts: ["http://open_data_pipeline_elasticsearch:9200"]

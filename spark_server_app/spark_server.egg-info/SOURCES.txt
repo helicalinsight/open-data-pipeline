@@ -1,0 +1,9 @@
+pyproject.toml
+setup.cfg
+setup.py
+spark_server/__init__.py
+spark_server.egg-info/PKG-INFO
+spark_server.egg-info/SOURCES.txt
+spark_server.egg-info/dependency_links.txt
+spark_server.egg-info/top_level.txt
+tests/test_main.py

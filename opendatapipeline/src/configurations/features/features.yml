@@ -1,0 +1,708 @@
+free:
+  role: "free"
+  chat:
+    - jobs
+    - create
+  job:
+    - history
+    - datapreview
+    - reset
+    - load
+  datasources:
+    - flat_files
+
+admin:
+  role: "admin"
+  chat:
+    - jobs
+    - create
+    - schedule
+  job:
+    - history
+    - datapreview
+    - reset
+    - load
+    - trigger
+    - undo
+    - yaml
+    - ace
+    # - redo
+  datasources:
+    - flat_files
+    - redshift
+    - mysql
+    - snowflake
+    - postgres
+    - astra
+    - cassandra
+    - firebird
+    - oracle
+    - ms_sql_server
+    - google_sheets
+    - s3
+    - couchbase
+    - databricks
+
+editor_configurations:
+  yaml:
+    - label: "read_files"
+      kind: "Function"
+      documentation: |
+        This is a function to read the files based on the given file ID and file name.
+      detail: |
+        read_files(file_id: str, file_name: str) -> Dataframe
+      insertText: |
+        -   function: read_files
+            output:
+              dataframe_alias: data1
+              source_id: 669e3404fd5c32fb759d2b2c
+            parameters:
+              file_id: 66a7ebc3-8889-4a41-aea9-e1f7eda1d26c
+              file_name: Students
+
+    - label: "export"
+      kind: "Function"
+      documentation: |
+        This function is used to export a dataframe to a target file
+      detail: |
+        export(alias: str, type: str, source_id: str, user_id: str) -> None
+      insertText: |
+        - function: export
+          output: null
+          parameters:
+            alias: df_sql_1
+            type: csv
+            source_id: 669e3404fd5c32fb759d2b2c
+            user_id: 670e60a261fa9d80ecb984b2
+
+    - label: "export_table"
+      kind: "Function"
+      documentation: |
+        This function is used to export a dataframe to a target table
+      detail: |
+        export_table(connection_id: str, table_name: str, source_id: str) -> None
+      insertText: |
+        - function: export_table
+          output: null
+          parameters:
+            connection_id: 67a5aacd9c2987e51bb0338f
+            table_name: public.poc_yy_analysis
+            source_id: 669e3404fd5c32fb759d2b2c
+
+    - label: "delete_files"
+      kind: "Function"
+      documentation: |
+        This is a function to delete loaded file or table from chat.
+      detail: |
+        delete_files(source_id: str) -> None
+      insertText: |
+        - function: delete_files
+          parameters:
+            source_id: <source_id>
+
+    - label: "read_tables"
+      kind: "Function"
+      documentation: |
+        This function reads tables based on the table name and connection ID.
+      detail: |
+        read_tables(table_name: str, connection_id: str) -> Dataframe
+      insertText: |
+        -   function: read_tables
+            output:
+              dataframe_alias: COUNTRY
+              source_id: 669e2884941eaacfdedc798a
+            parameters:
+              columns: []
+              connection_id: 667bf6bd88a7682f2eae237d
+              table_name: COUNTRY
+
+    - label: "read"
+      kind: "Function"
+      documentation: |
+        This function reads files (e.g., CSV, Parquet) from S3 based on the file name and connection ID.
+      detail: |
+        read(file_name: str, connection_id: str) -> Dataframe
+      insertText: |
+        -   function: read
+            output:
+              dataframe_alias: 2017_Order_Data
+              source_id: 669e2884941eaacfdddc798a
+            parameters:
+              connection_id: 654879fe22a09b96f228302b
+              file_name: 2017_Order_Data.csv
+              type: .csv
+              source_type: s3
+
+    - label: "add_columns"
+      kind: "Function"
+      documentation: |
+        This function adds columns with default values.
+      detail: |
+        add_columns(column: list, default: any) -> Dataframe
+      insertText: |
+        -   function: add_columns
+            output: null
+            parameters:
+              dataframe_alias: data1
+              groups:
+                - columns:
+                    - dob
+                  default: null
+              source_id: 669e3404fd5c32fb759d2b2c
+
+    - label: "concat"
+      kind: "Function"
+      documentation: |
+        This is function to perform concatenation on two columns,takes two columns as input and joins with the help of separator and stores in destination column.
+      detail: |
+        concat(source_column: list, separator: str, destination_columns: str) -> Dataframe
+      insertText: |
+        -   function: concat
+            output: null
+            parameters:
+              dataframe_alias: Enrollments
+              groups:
+                - columns:
+                    - firstname
+                    - lastname
+                  destination_column: full_name
+                  separator: ' '
+              source_id: 669f484ef0926ea7d7b36533
+
+    - label: "correlation"
+      kind: "Function"
+      documentation: |
+        This is function to get the correlation value of two given columns and store it in destination column.
+      detail: |
+        correlation(columns: list, destination_column: str) -> Dataframe
+      insertText: |
+        -   function: correlation
+            output: null
+            parameters:
+              dataframe_alias: Enrollments
+              groups:
+                - columns:
+                    - min_salary
+                    - max_salary
+                  destination_column: min_max_correlation
+              source_id: 669f484ef0926ea7d7b36533
+
+    - label: "date_format"
+      kind: "Function"
+      documentation: "This is function to change the date format in the given column."
+      detail: "date_format(columns: list, format: str) -> Dataframe"
+      insertText: |
+        -   function: date_format
+            output: null
+            parameters:
+              dataframe_alias: enrollments
+              groups:
+                - columns:
+                    - dob
+                  format: dd-mm-yy
+              source_id: 669f4e7e941eaacfdedc79f0
+
+    - label: "deduplicate"
+      kind: "Function"
+      documentation: "This is function to remove duplicates in the given columns."
+      detail: "deduplicate(columns: list) -> Dataframe"
+      insertText: |
+        -    function: deduplicate
+             output: null
+             parameters:
+               dataframe_alias: Enrollments
+               groups:
+                 - columns:
+                     - lastname
+               source_id: 669f52faf0926ea7d7b3653a
+
+    - label: "drop_all_columns_except"
+      kind: "Function"
+      documentation: "This is function to drop all columns except the given columns."
+      detail: "drop_all_columns_except(columns: list) -> Dataframe"
+      insertText: |
+        -   function: drop_all_columns_except
+            output: null
+            parameters:
+              dataframe_alias: Enrollments
+              groups:
+                - columns:
+                    - public_id
+              source_id: 669f52faf0926ea7d7b3653a
+
+    - label: "drop_columns"
+      kind: "Function"
+      documentation: "This is function to drop the given columns."
+      detail: "drop_columns(columns: list) -> Dataframe"
+      insertText: |
+        -   function: drop_columns
+            output: null
+            parameters:
+              dataframe_alias: Enrollments
+              groups:
+                - columns:
+                    - public_id
+              source_id: 669f52faf0926ea7d7b3653a
+
+    - label: "drop_na"
+      kind: "Function"
+      documentation: "This is function to drop na values in the given columns."
+      detail: "drop_na(subset: list) -> Dataframe"
+      insertText: |
+        -   function: drop_na
+            output: null
+            parameters:
+              dataframe_alias: Enrollments
+              groups:
+                - subset:
+                    - address
+              source_id: 669f502ef0926ea7d7b36535
+
+    - label: "extract"
+      kind: "Function"
+      documentation: "This is function to extract the component from the given column and store it in destination column."
+      detail: "extract(column: str, component: str, destination_column: str) -> Dataframe"
+      insertText: |
+        -   function: extract
+            output: null
+            parameters:
+                dataframe_alias: Enrollments
+                groups:
+                -   column: dob
+                    component:
+                    - year
+                    destination_column: dob_year
+                source_id: 669f52faf0926ea7d7b3653a
+
+    - label: "fill_na"
+      kind: "Function"
+      documentation: "This is function to fill na values in the given columns."
+      detail: "fill_na(column: str, value: str) -> Dataframe"
+      insertText: |
+        -   function: fill_na
+            output: null
+            parameters:
+              dataframe_alias: Enrollments
+              groups:
+                - column:
+                    - public_id
+              value: 000
+              source_id: 669f502ef0926ea7d7b36535
+
+    - label: "filter_value"
+      kind: "Function"
+      documentation: "This is function to perform filter on the given column."
+      detail: "filter_value(columns: list, expr: str, value: str) -> Dataframe"
+      insertText: |
+        -   function: filter_value
+            output:
+              dataframe_alias: filter_value_cqgiWUI1
+              source_id: 669a776d253079a44ba240bf
+            parameters:
+              dataframe_alias: Enrollments
+              groups:
+                - columns:
+                    - age
+                  expr: not_equals
+                  value:
+                    - 16
+              source_id: 669a75baab33f8e26effafca
+
+    - label: "joins"
+      kind: "Function"
+      documentation: "This is function to join the files based on the join_type, filenames and columns."
+      detail: "joins(join_type: str, left_on: list, right_on: list, file_names: list) -> Dataframe"
+      insertText: |
+        -   function: joins
+            output:
+              dataframe_alias: joins_NluLtzAo
+              source_id: 669f4861941eaacfdedc79e9
+            parameters:
+              dataframe_aliases:
+                - courses
+                - students
+              file_names:
+                - courses
+                - students
+              groups:
+                - join_type: inner
+                  left_on:
+                    - student_id
+                  right_on:
+                    - student_id
+              source_id:
+                - 669f4813941eaacfdedc79e7
+                - 669f4813941eaacfdedc79e8
+
+    - label: "lower_case"
+      kind: "Function"
+      documentation: "This is function to apply lower case on the given column."
+      detail: "lower_case(columns: list) -> Dataframe"
+      insertText: |
+        -   function: lower_case
+            output: null
+            parameters:
+              dataframe_alias: Enrollments
+              groups:
+                - columns:
+                    - firstname
+              source_id: 669f52faf0926ea7d7b3653a
+
+    - label: "rearrange_columns"
+      kind: "Function"
+      documentation: "This is function to rearrange the order of columns."
+      detail: "rearrange_columns(columns: list) -> Dataframe"
+      insertText: |
+        -   function: rearrange_columns
+            output: null
+            parameters:
+                dataframe_alias: Enrollments
+                groups:
+                -   columns:
+                    -   name: 1
+                source_id: 669f52faf0926ea7d7b3653a
+
+    - label: "rename_columns"
+      kind: "Function"
+      documentation: "This is function to rename the columns."
+      detail: "rename_columns(old_name: str, new_name: str) -> Dataframe"
+      insertText: |
+        -   function: rename_columns
+            output: null
+            parameters:
+              dataframe_alias: Enrollments
+              groups:
+                - new_name: new_age
+                  old_name: age
+              source_id: 669f52faf0926ea7d7b3653a
+
+    - label: "replace_special_characters"
+      kind: "Function"
+      documentation: "This is function to replace the special characters in the given columns."
+      detail: "replace_special_characters(columns: list, target_character: str, replacement_character: str) -> Dataframe"
+      insertText: |
+        -   function: replace_special_characters
+            output: null
+            parameters:
+              dataframe_alias: Enrollments
+              groups:
+                - columns:
+                    - dob
+                  replacement_character: '?'
+                  target_character: /
+              source_id: 669f57a0f0926ea7d7b3653d
+
+    - label: "sort"
+      kind: "Function"
+      documentation: "This is function to sort the given column."
+      detail: "sort(columns: list, ascending: bool) -> Dataframe"
+      insertText: |
+        -   function: sort
+            output: null
+            parameters:
+              dataframe_alias: Enrollments
+              groups:
+                - ascending: true
+                  columns:
+                    - firstname
+              source_id: 669f57a0f0926ea7d7b3653d
+
+    - label: "split"
+      kind: "Function"
+      documentation: "This is function to split the given column."
+      detail: "split(column: str, destination_columns: list, delimiter: str) -> Dataframe"
+      insertText: |
+        -   function: split
+            output: null
+            parameters:
+                dataframe_alias: Enrollments
+                groups:
+                -   column: dob
+                    delimiter: '/'
+                    destination_columns:
+                    - day
+                    - month
+                    - year
+                source_id: 669f5881f0926ea7d7b3653e              
+
+    - label: "trim"
+      kind: "Function"
+      documentation: "This is function to trim the values in the given column."
+      detail: "trim(number_of_characters: int, columns: list, location: str) -> Dataframe"
+      insertText: |
+        -   function: trim
+            output: null
+            parameters:
+              dataframe_alias: Enrollments
+              groups:
+                - columns:
+                    - firstname
+                  location: left
+                  number_of_characters: 1
+              source_id: 669f5881f0926ea7d7b3653e
+
+    - label: "union"
+      kind: "Function"
+      documentation: "This is function to union the files."
+      detail: "union(columns: list, source_id: list, file_names: list) -> Dataframe"
+      insertText: |
+        -   function: union
+            output:
+              dataframe_alias: union_XpD0YkNC
+              source_id: 669f47e5941eaacfdedc79e6
+            parameters:
+              dataframe_aliases:
+                - union_1
+                - union_2
+              file_names:
+                - union_1
+                - union_2
+              groups:
+                - columns: null
+              source_id:
+                - 669f47d3941eaacfdedc79e4
+                - 669f47d7941eaacfdedc79e5
+
+    - label: "upper_case"
+      kind: "Function"
+      documentation: "This is function to apply upper case on the given column."
+      detail: "upper_case(columns: list) -> Dataframe"
+      insertText: |
+        -   function: upper_case
+            output: null
+            parameters:
+              dataframe_alias: Enrollments
+              groups:
+                - columns:
+                    - firstname
+              source_id: 669f52faf0926ea7d7b3653a
+
+    - label: "when_otherwise"
+      kind: "Function"
+      documentation: "This is function to perform when otherwise operation."
+      detail: "when_otherwise(query: str, destination_column: list) -> Dataframe"
+      insertText: |
+        -   function: when_otherwise
+            output: null
+            parameters:
+              dataframe_alias: data1
+              groups:
+                - destination_column:
+                    - new_column_1
+                  query: |
+                    SELECT *, CASE WHEN age < 18 THEN 'minor' ELSE 'adult' END AS new_column_1
+                    FROM df;
+              source_id: 669e3404fd5c32fb759d2b2c
+
+    - label: "aggregate"
+      kind: "Function"
+      documentation: "This is function to perform aggregation operation on a given column."
+      detail: "aggregate(columns: list, destination_columns: list, group_by: list, agg: list) -> Dataframe"
+      insertText: |
+        -   function: aggregate
+            output: null
+            parameters:
+                dataframe_alias: numeric_test_data
+                groups:
+                -   agg:
+                    - sum
+                    columns:
+                    - cost
+                    destination_columns:
+                    - sum_cost
+                    group_by: []
+                source_id: 6667f8896t591f2396b14d7
+
+    - label: "typecast"
+      kind: "Function"
+      documentation: "This is function to change the datatype of the column."
+      detail: "typecast(columns: list, new_type: str, old_type: str) -> Dataframe"
+      insertText: |
+        -   function: typecast
+            output: null
+            parameters:
+              dataframe_alias: enrollments
+              groups:
+                - columns:
+                    - dob
+                  new_type: date
+                  old_type: null
+              source_id: 669f4e7e941eaacfdedc79f0
+
+    - label: "expression"
+      kind: "Function"
+      documentation: "This is function to execute arithmetic operations."
+      detail: "expression(query: str, destination_column: str(optional)) -> Dataframe"
+      insertText: |
+        -   function: expression
+            output: null
+            parameters:
+              dataframe_alias: data1
+              groups:
+                - destination_column: new_age
+                  query: age + 10
+              source_id: 669e3404fd5c32fb759d2b2c
+
+    - label: "sql"
+      kind: "Function"
+      documentation: "This is function to execute sql."
+      detail: "sql(query: str) -> Dataframe"
+      insertText: |
+        -   function: sql
+            output:
+              dataframe_alias: sql_tKTEthhx
+              source_id: 669f4bb0f0926ea7d7b36534
+            parameters:
+              dataframe_alias: Enrollments
+              groups:
+                - query: SELECT corr(public_id, age) FROM df
+              source_id: 669f484ef0926ea7d7b36533
+
+  python:
+    - label: "JobArguments"
+      kind: "Class"
+      documentation: "This is a custom class with methods for job arguments."
+      detail: "JobArguments.function_name"
+      insertText: "JobArguments"
+      methods:
+        - label: "create"
+          kind: "Function"
+          documentation: "Create a new job argument."
+          detail: "JobArguments.create(config_key='config', config_value='true')"
+          insertText: "create"
+        - label: "get"
+          kind: "Function"
+          documentation: "Fetches the details of the job argument based on key or fetches entires job arguments dictionary."
+          detail: "create(config_name: str) -> dict"
+          insertText: "get"
+        - label: "update"
+          kind: "Function"
+          documentation: "Updates the existing key."
+          detail: "update(config_name: str, config_value: str) -> bool"
+          insertText: "update"
+        - label: "delete"
+          kind: "Function"
+          documentation: "Deletes the Job argument based on the key."
+          detail: "delete(config_name: str) -> bool"
+          insertText: "delete"
+    - label: "DataframeInformation"
+      kind: "class"
+      detail: "DataframeInformation.function_name"
+      documentation: "This is a custom class with methods for dataframe information."
+      insertText: "DataframeInformation"
+      methods:
+        - label: "create"
+          kind: "Function"
+          detail: "DataframeInformation.create(id,alias,dataframe) -> bool"
+          documentation: "Create a new dictionary of dataframes."
+          insertText: "create"
+        - label: "get"
+          kind: "Function"
+          detail: "DataframeInformation.get(id,alias) -> Dict or Dataframe"
+          documentation: "Fetches the dataframe information based on id or alias."
+          insertText: "get"
+        - label: "update"
+          kind: "Function"
+          detail: "DataframeInformation.update(id,alias,dataframe) -> bool"
+          documentation: "Updates the existing dataframe based on the id or alias."
+          insertText: "update"
+        - label: "delete"
+          kind: "Function"
+          detail: "DataframeInformation.update(id,alias) -> bool"
+          documentation: "Deletes the dataframe information based on id or alias."
+          insertText: "delete"
+        - label: "convert_to_pandas"
+          kind: "Function"
+          detail: "DataframeInformation.convert_to_pandas(dataframe) -> Dataframe"
+          documentation: "Converts the spark dataframe to pandas dataframe."
+          insertText: "convert_to_pandas"
+        - label: "convert_to_spark"
+          kind: "Function"
+          detail: "DataframeInformation.convert_to_spark(dataframe) -> Dataframe"
+          documentation: "Converts the pandas dataframe to spark dataframe."
+          insertText: "convert_to_spark"
+    - label: "ReadOrWriteFiles"
+      kind: "class"
+      detail: "ReadOrWriteFiles.function_name"
+      documentation: "This is a custom class with methods to read and write into json, csv and excel files."
+      insertText: "ReadOrWriteFiles"
+      methods:
+        - label: "read_csv"
+          kind: "Function"
+          detail: "ReadOrWriteFiles.read_csv(engine, file_name, **kwargs) -> Dataframe"
+          documentation: "Reads the csv file based on the given engine, file name and kwargs specified."
+          insertText: "read_csv"
+        - label: "read_excel"
+          kind: "Function"
+          detail: "ReadOrWriteFiles.read_excel(engine, file_name, **kwargs) -> Dataframe"
+          documentation: "Reads the excel file based on the given engine, file name and kwargs specified."
+          insertText: "read_excel"
+        - label: "write_csv"
+          kind: "Function"
+          detail: "ReadOrWriteFiles.write_csv(engine, file_name, dataframe, **kwargs) -> bool"
+          documentation: "Writes the given dataframe as csv file to a specified path based on given engine and kwargs"
+          insertText: "write_csv"
+        - label: "write_excel"
+          kind: "Function"
+          detail: "ReadOrWriteFiles.write_excel(engine, file_name, dataframe, **kwargs) -> bool"
+          documentation: "Writes the given dataframe as excel file to a specified path based on given engine and kwargs"
+          insertText: "write_excel"
+        - label: "read_json"
+          kind: "Function"
+          detail: "ReadOrWriteFiles.read_json(file_name, **kwargs) -> JsonData"
+          documentation: "Reads the json file based on the given file name and kwargs specified."
+          insertText: "read_json"
+        - label: "write_json"
+          kind: "Function"
+          detail: "ReadOrWriteFiles.write_json(file_name, json_data, **kwargs) -> bool"
+          documentation: "Writes the given json_data as json file to a specified path based on given kwargs (optional)"
+          insertText: "write_json"
+    - label: "Connection"
+      kind: "class"
+      detail: "Connection.function_name"
+      documentation: "Connection class stores all connection details for the user connections loaded in the chat"
+      insertText: "Connection"
+      methods:
+        - label: "get_by_file_name"
+          kind: "Function"
+          documentation: "Get file connection details for given file name. if file is users.csv, file_name is users.csv"
+          insertText: "get_by_file_name"
+        - label: "get_by_source_name"
+          kind: "Function"
+          documentation: "Get source connection details for given source name"
+          insertText: "get_by_source_name"
+        - label: "get"
+          kind: "Function"
+          detail: "Connection.get(id) -> dict"
+          documentation: "Returns the connection details based on id"
+          insertText: "get"
+        - label: "items"
+          kind: "Function"
+          detail: "Connection.items() -> List[Tuple]"
+          documentation: "Returns all the connection details as a list of key-value pairs"
+          insertText: "items"
+        - label: "keys"
+          kind: "Function"
+          detail: "Connection.keys() -> List"
+          documentation: "Returns list of all connection ids"
+          insertText: "keys"
+    - label: "AodAudit"
+      kind: "class"
+      detail: "AodAudit.function_name"
+      documentation: "This class is used to allow usage tracking for the function called. This creates metadata needed to output usage under 'Audit' section."
+      insertText: "AodAudit"
+      methods:
+        - label: "record"
+          kind: "Function"
+          detail: "Allows to decorate any function and record usage for Auditing"
+          insertText: "record"
+    - label: "CustomSparkContext"
+      kind: "class"
+      detail: "CustomSparkContext.function_name"
+      documentation: "Custom spark context that extends the functionality of the default spark context"
+      insertText: "CustomSparkContext"
+      methods:
+        - label: "read_csv"
+          kind: "Function"
+          detail: "Read csv file using custom spark context"
+          insertText: "read_csv"

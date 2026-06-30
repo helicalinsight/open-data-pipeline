@@ -1,0 +1,6 @@
+schedule:
+  state:
+    queued: Queued
+    running: Running
+    success: Successful
+    failed: Failed

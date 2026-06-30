@@ -1,0 +1,7 @@
+# Cursor Core Directive
+
+You must read, adapt to, and strictly follow the master configuration, persona profiles, and directory mappings outlined in the `AGENTS.md` file located at the root of this repository.
+
+## Context Hydration
+- Treat `AGENTS.md` as your primary system prompt.
+- When executing tasks, find your behavioral guardrails inside the `.agent/rules/` directory (which maps directly to your `.cursor/rules/` environment).

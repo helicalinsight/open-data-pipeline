@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ask On Data - 502 Bad Gateway</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/static/react/images/favicon.svg"
+    />
+    <meta http-equiv="refresh" content="5" />
+
+    <style>
+      body {
+        background-color: #152a4f;
+        color: #ffffff;
+        font-family: "Ubuntu", sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        text-align: center;
+      }
+
+      .logo {
+        width: 60px;
+        height: auto;
+        margin-bottom: 10px;
+      }
+
+      .title {
+        font-size: 22px;
+        font-weight: bold;
+        color: #F28E1E;
+        margin: 10px 0;
+      }
+
+      .message {
+        font-size: 16px;
+        color: #ffffff;
+        opacity: 0.9;
+        margin: 0;
+      }
+
+      .progress-container {
+        width: 300px;
+        height: 6px;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+        overflow: hidden;
+        margin-top: 20px;
+      }
+
+      .progress-bar {
+        height: 100%;
+        width: 0%;
+        background-color: #f28e1e;
+        border-radius: 3px;
+        animation: progress 4.5s ease-in-out forwards;
+      }
+
+      @keyframes progress {
+        0% {
+          width: 0%;
+        }
+        100% {
+          width: 100%;
+        }
+      }
+
+      .countdown {
+        margin-top: 15px;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+      }
+    </style>
+  </head>
+  <body>
+    <img src="/error-assets/favicon.svg" alt="Ask on data" class="logo" />
+    <h1 class="title">The App is starting… Please wait.</h1>
+    <p class="message">
+      We're getting things ready. This page will refresh automatically.
+    </p>
+    <div class="progress-container">
+      <div class="progress-bar"></div>
+    </div>
+    <div class="countdown">
+      Refreshing in <span id="countdown">5</span> seconds
+    </div>
+    <script>
+      let seconds = 5;
+      const countdownElement = document.getElementById("countdown");
+      const countdownInterval = setInterval(() => {
+        seconds--;
+        countdownElement.textContent = seconds;
+        if (seconds <= 0) {
+          clearInterval(countdownInterval);
+        }
+      }, 1000);
+    </script>
+  </body>
+</html>

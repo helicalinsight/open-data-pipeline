@@ -1,0 +1,45 @@
+@import "../../scss/variables.scss";
+.modal-header {
+  height: 60px;
+  flex-shrink: 0;
+  color: $primaryColor_2;
+  font-size: 18px;
+  font-style: normal;
+  line-height: normal;
+}
+.modal-content {
+  font-family: "Montserrat";
+  .description {
+    color: #626060;
+    font-weight: "bold";
+  }
+  .radio-btns {
+    padding: 1rem 0rem;
+  }
+  .buttons-container {
+    margin: 15px;
+  }
+  .modal-button {
+    width: 150px;
+    height: 36px;
+    border-radius: 5px;
+    border: 1px solid $primaryColor_2;
+    background: $whiteColor;
+    color: $primaryColor_2;
+    font-weight: "bold";
+  }
+  .modal-button:hover {
+    color: $primaryColor_2 !important;
+    background:  $whiteColor;
+  }
+  .title {
+    font-size: 14px;
+    text-align: center;
+  }
+}
+.ant-modal-header {
+  border-bottom: 1px solid #e4e4e4;
+}
+.ant-modal-content {
+  padding: 0 !important;
+}

@@ -1,0 +1,63 @@
+services:
+  mongo:
+    image: mongo:${MONGO_VERSION:-7.0.5}
+    restart: 'no'
+    environment:
+      - MONGO_INITDB_DATABASE=user_sessions_test
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    command:
+      - /bin/sh
+      - -c
+      - |
+        mongod --replSet rs0 --bind_ip_all --dbpath /data/db --quiet &
+        MONGO_PID=$!
+        until mongosh --quiet --eval "db.runCommand({ ping: 1 })" >/dev/null 2>&1; do sleep 1; done
+        mongosh --quiet --eval "rs.initiate({_id: 'rs0', members: [{ _id: 0, host: 'mongo:27017'}]})" || true
+        mongosh --quiet --eval "db.getSiblingDB('admin').createUser({user: 'root', pwd: 'root', roles: [{ role: 'root', db: 'admin' }, { role: 'clusterAdmin', db: 'admin' }]})" || true
+        mongosh --quiet --eval "db.getSiblingDB('user_sessions_test').createUser({user: 'admin', pwd: 'admin', roles: [{ role: 'readWrite', db: 'user_sessions_test' }]})" || true
+        mongosh --quiet --eval "db.getSiblingDB('user_sessions').createUser({user: 'admin', pwd: 'admin', roles: [{ role: 'readWrite', db: 'user_sessions' }]})" || true
+        wait $MONGO_PID
+
+  test_runner:
+    # image: askondata-test-runner:latest
+    build:
+      context: ..
+      dockerfile: docker/test-runner.Dockerfile
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      APP_ENVIRONMENT: test
+      MONGO_HOST: mongo
+      MONGO_USERNAME: admin
+      MONGO_PASSWORD: admin
+      MONGO_DB: user_sessions
+      MONGO_RS: rs0
+      # Optional URI if any code path prefers a single connection string:
+      MONGO_URI: mongodb://admin:admin@mongo:27017/?replicaSet=rs0&authSource=admin
+
+      AIRFLOW_HOME: /
+      PYTHONPATH: /workspace:/workspace/opendatapipeline:/workspace/spark_server_app:/workspace/dlt_server_app:/workspace/inbuilt_modules:/workspace/core
+      PYTEST_ARGS: ${PYTEST_ARGS:-"opendatapipeline/tests spark_server_app/tests dlt_server_app/tests"}
+    working_dir: /workspace
+    volumes:
+      - ..:/workspace
+      - ../opendatapipeline/inbuilt_modules:/opt/airflow/inbuilt_modules # for dlt inbuilt_module access
+      - ../airflow/dlt/dlt_data:/app/data
+      - ../airflow/dlt/dlt_state:/app/.dlt
+    ports:
+      - "5678:5678"
+    command: >
+      bash -lc "
+        # Run tests
+        python -m debugpy --wait-for-client --listen 0.0.0.0:5678 -m pytest -s ${PYTEST_ARGS}
+      "
+
+networks:
+  default:
+    name: open_data_pipeline_test_net
+    driver: bridge

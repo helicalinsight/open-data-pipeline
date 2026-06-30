@@ -1,0 +1,510 @@
+######## COMMON EXTENSIONS ############
+
+# Common logging is added to limit the amount of logs Docker accumulates from
+# various containers
+x-common-logging: &common-logging
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "20m"
+      max-file: "3"
+
+x-mongo-common: &mongo-common
+  image: mongo:${MONGO_VERSION:-7.0.5}
+  pull_policy: missing
+  restart: always
+  networks:
+    - open-data-pipeline-cluster
+  <<: *common-logging
+  deploy:
+    resources:
+      limits:
+        cpus: ${MONGO_CPU:-1.0}
+        memory: ${MONGO_MEM:-2048M}
+      reservations:
+        cpus: ${MONGO_CPU_RES:-0.25}
+        memory: ${MONGO_MEM_RES:-512M}
+  profiles:
+    - dev
+    - prod
+
+x-airflow: &airflow-common
+  build:
+    context: .
+    dockerfile: airflow_docker.Dockerfile
+  restart: always
+  env_file:
+    - .env
+  environment: &airflow-common-env
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER:-askondata}:${POSTGRES_PASSWORD:-askondata}@open_data_pipeline_airflow_postgres:5432/${POSTGRES_DB:-askondata_airflow}
+    AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    AIRFLOW__CORE__LOGGING_LEVEL: 'INFO'
+    AIRFLOW__LOGGING__LOGGING_LEVEL: 'INFO'
+    AIRFLOW__LOGGING__FAB_LOGGING_LEVEL: 'INFO'
+    AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
+    AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
+    AIRFLOW__SMTP__SMTP_HOST: ${AIRFLOW__SMTP__SMTP_HOST}
+    AIRFLOW__SMTP__SMTP_USER: ${AIRFLOW__SMTP__SMTP_USER}
+    AIRFLOW__SMTP__SMTP_PASSWORD: ${AIRFLOW__SMTP__SMTP_PASSWORD}
+    AIRFLOW__SMTP__SMTP_PORT: ${AIRFLOW__SMTP__SMTP_PORT}
+    AIRFLOW__SMTP__SMTP_MAIL_FROM: ${AIRFLOW__SMTP__SMTP_MAIL_FROM}
+    AIRFLOW__CORE__PARALLELISM: ${AIRFLOW__CORE__PARALLELISM}
+    AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL: 10
+    #AIRFLOW__WEBSERVER__SECRET_KEY: 'askondata'
+    #PYSPARK_PYTHON: '/home/airflow/.local/bin/python'
+    AIRFLOW_HOME: '/airflow'
+    PYTHONPATH: '/airflow:/app:/app/audit_tracker:/app/odp_code_context:/app/core:${PYTHONPATH:-/app}'
+    SPARK_HOME: '/opt/spark'
+    JAVA_HOME: '/opt/java/openjdk'
+    APP_ENVIRONMENT: ${APP_ENVIRONMENT:-prod}
+    MONGO_PASSWORD: 'askondata'
+    # DLT specific environment variables
+    DLT_DATA_PATH: '/opt/airflow/dlt/dlt_data'
+    DLT_STATE_PATH: '/opt/airflow/dlt/dlt_state'
+    DLT_DATA_DIR: '/opt/airflow/dlt/dlt_state'
+  volumes:
+    - ./askondata/data/airflow/dags:/airflow/dags
+    - ./opendatapipeline/logs/airflow:/airflow/logs
+    - ./inbuilt_modules:/opt/airflow/inbuilt_modules
+    - ./spark_server_app:/opt/airflow/spark_server_app
+    - spark_home:/opt/spark
+    - java_home:/opt/java/openjdk
+    - ./hadoop_local:/hadoop_local
+    # Caution: Following mounts help with syncing timezone only when host 
+    #   is Linux.
+    - /etc/timezone:/etc/timezone:ro
+    - /etc/localtime:/etc/localtime:ro
+    # DLT specific volumes
+    - ./askondata/data/airflow/dlt/dlt_data:/opt/airflow/dlt/dlt_data
+    - ./askondata/data/airflow/dlt/dlt_state:/opt/airflow/dlt/dlt_state
+    - /var/run/docker.sock:/var/run/docker.sock
+    - ../audit_tracker:/app/audit_tracker
+    - ../odp_code_context:/app/odp_code_context
+    - ../core:/app/core
+  depends_on:
+    open_data_pipeline_airflow_postgres:
+      condition: service_healthy
+  networks:
+    open-data-pipeline-cluster:
+  profiles:
+    - dev
+    - prod
+
+x-spark-common: &spark-common
+  image: apache/spark:${SPARK_VERSION}
+  pull_policy: missing
+  restart: always
+  user: "0:0"
+  env_file:
+    - .env
+  volumes:
+    - ./opendatapipeline/logs/spark:/spark/logs
+    - ./inbuilt_modules:/opt/airflow/inbuilt_modules
+    - ./spark_server_app:/opt/airflow/spark_server_app
+    - ./hadoop_local:/hadoop_local
+    - spark_home:/opt/spark
+    - java_home:/opt/java/openjdk
+    - /etc/timezone:/etc/timezone:ro
+    - /etc/localtime:/etc/localtime:ro
+    - ./opendatapipeline/config/spark/${SPARK_PROFILE}:/opt/spark/conf
+    - ./opendatapipeline/logs/spark:/opt/spark/logs
+    - ../audit_tracker:/app/audit_tracker
+    - ../odp_code_context:/app/odp_code_context
+    - ../core:/app/core
+  environment:
+    - PYTHONPATH=/app:/app/audit_tracker:/app/odp_code_context:/app/core:${PYTHONPATH:-/app}
+
+  networks:
+    open-data-pipeline-cluster:
+  profiles:
+    - dev
+    - prod
+
+x-hadoop-common: &hadoop-common
+  image: apache/hadoop:${HADOOP_VERSION:-3.3.5}
+  env_file:
+    - ./opendatapipeline/config/hadoop/config
+  networks:
+    open-data-pipeline-cluster:
+
+      ##### SERVICES #######
+
+
+      ### MONGO Cluster  ####
+
+services:
+  open_data_pipeline_mongo_primary:
+    <<: *mongo-common
+    hostname: askondata_mongo_primary
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --port 27021  --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    command:
+      - /bin/sh
+      - -c
+      - |
+        chmod 400 /mongo-key
+        chown 999:999 /mongo-key
+        sh mongo-primary-init.sh &
+        mongod --replSet askOnDataReplicaSet --port 27021  --bind_ip_all --auth --keyFile mongo-key
+
+    volumes:
+      - ./askondata/data/mongo/primary:/data/db
+      - ./opendatapipeline/config/mongo/mongo-primary-init.sh:/mongo-primary-init.sh
+      - ./opendatapipeline/config/mongo/mongo-key:/mongo-key
+      - ./opendatapipeline/config/mongo/mongod.conf:/etc/mongod.conf
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
+  open_data_pipeline_mongo_secondary:
+    <<: *mongo-common
+    hostname: askondata_mongo_secondary
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --port 27022  --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    command:
+      - /bin/sh
+      - -c
+      - |
+        chmod 400 /mongo-key
+        chown 999:999 /mongo-key
+        mongod --replSet askOnDataReplicaSet --port 27022  --bind_ip_all --auth --keyFile mongo-key
+    volumes:
+      - ./askondata/data/mongo/secondary:/data/db
+      - ./opendatapipeline/config/mongo/mongod.conf:/etc/mongod.conf
+      - ./opendatapipeline/config/mongo/mongo-key:/mongo-key
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
+  open_data_pipeline_mongo_tertiary:
+    <<: *mongo-common
+    hostname: askondata_mongo_tertiary
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --port 27023  --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    command:
+      - /bin/sh
+      - -c
+      - |
+        chmod 400 /mongo-key
+        chown 999:999 /mongo-key
+        mongod --replSet askOnDataReplicaSet --port 27023  --bind_ip_all --auth --keyFile mongo-key
+    volumes:
+      - ./askondata/data/mongo/tertiary:/data/db
+      - ./opendatapipeline/config/mongo/mongo-key:/mongo-key
+      - ./opendatapipeline/config/mongo/mongod.conf:/etc/mongod.conf
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
+  open_data_pipeline_mongo_ready:
+    image: mongo:${MONGO_VERSION:-7.0.5}
+    command:
+      - /bin/bash
+      - -lc
+      - |
+        for i in {1..120}; do
+          for host in open_data_pipeline_mongo_primary:27021 open_data_pipeline_mongo_secondary:27022 open_data_pipeline_mongo_tertiary:27023; do
+            h=$${host%:*}; p=$${host#*:};
+            if mongosh --host "$${h}" --port "$${p}" --quiet --eval 'quit(db.runCommand({ping:1}).ok==1?0:2)'; then
+              echo "Mongo at $${host} is ready"; exit 0;
+            fi
+          done
+          echo "Waiting for any mongo member..."; sleep 5;
+        done
+        echo "Timeout waiting for mongo"; exit 1
+    depends_on:
+      open_data_pipeline_mongo_primary:
+        condition: service_started
+      open_data_pipeline_mongo_secondary:
+        condition: service_started
+      open_data_pipeline_mongo_tertiary:
+        condition: service_started
+    networks:
+      open-data-pipeline-cluster:
+    profiles:
+      - dev
+      - prod
+
+  ##### AIRFLOW #######
+  open_data_pipeline_airflow_postgres:
+    image: postgres:${POSTGRES_VERSION}
+    # container_name: open_data_pipeline_airflow_postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-askondata}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-askondata}
+      - POSTGRES_DB=${POSTGRES_DB:-askondata_airflow}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+    volumes:
+      - ./askondata/data/postgres:/var/lib/postgresql/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-askondata} -d ${POSTGRES_DB:-askondata-airflow}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      open-data-pipeline-cluster:
+
+
+  open_data_pipeline_airflow_init:
+    <<: *airflow-common
+    # container_name: open_data_pipeline_airflow_init
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        cp -r /airflow_tmp/* /airflow/ && airflow db migrate && airflow users create \
+          --role Admin \
+          --username ${AIRFLOW_USERNAME:-askondata} \
+          --password ${AIRFLOW_PASSWORD:-askondata} \
+          --email test@askondata.com \
+          --firstname askondata \
+          --lastname askondata && \
+          airflow connections delete 'spark_default' 2>/dev/null || true; airflow connections add 'spark_default' \
+          --conn-json '{
+          "conn_type": "spark",
+          "description": "",
+          "login": "",
+          "password": null,
+          "host": "spark://open-data-pipeline-spark-master",
+          "port": 7077,
+          "schema": ""
+        }'
+    restart: on-failure:3
+    user: "0:0"
+    environment:
+      <<: *airflow-common-env
+      _AIRFLOW_DB_MIGRATE: 'true'
+      _AIRFLOW_WWW_USER_CREATE: 'true'
+      _AIRFLOW_WWW_USER_USERNAME: ${AIRFLOW_USERNAME:-askondata}
+      _AIRFLOW_WWW_USER_PASSWORD: ${AIRFLOW_PASSWORD:-askondata}
+
+  open_data_pipeline_airflow_webserver:
+    <<: *airflow-common
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        cp -r /airflow_tmp/* /airflow/ && airflow webserver
+    # container_name: open_data_pipeline_airflow_webserver
+    environment:
+      <<: *airflow-common-env
+    restart: always
+    user: "0:0"
+    # ports:
+    #   - "8080:8080"  
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "http://localhost:8080/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      open_data_pipeline_airflow_init:
+        condition: service_completed_successfully
+
+  open_data_pipeline_airflow_scheduler:
+    <<: *airflow-common
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        cp -r /airflow_tmp/* /airflow/ && airflow scheduler
+    environment:
+      <<: *airflow-common-env
+    # container_name: open_data_pipeline_airflow_scheduler
+    restart: always
+    user: "0:0"
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "http://localhost:8974/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      open_data_pipeline_airflow_init:
+        condition: service_completed_successfully
+      open_data_pipeline_airflow_webserver:
+        condition: service_healthy
+
+  ######## SPARK ##########
+  open-data-pipeline-spark-master:
+    <<: *spark-common
+    # container_name: open-data-pipeline-spark-master
+    environment:
+      - SPARK_CONF_DIR=/opt/spark/conf
+    command:
+      - /bin/sh
+      - -c
+      - |
+        cd /opt/spark/bin && \
+        ./spark-class org.apache.spark.deploy.master.Master \
+        --ip open-data-pipeline-spark-master \
+        --port 7077 \
+        --webui-port 8080 \
+        --properties-file /opt/spark/conf/spark-defaults.conf \
+        >> /opt/spark/logs/spark-master.log 2>&1
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  open-data-pipeline-spark-worker:
+    <<: *spark-common
+    # container_name: open-data-pipeline-spark-worker
+    environment:
+      - SPARK_CONF_DIR=/opt/spark/conf
+    command:
+      - /bin/sh
+      - -c
+      - |
+        cd /opt/spark/bin && \
+        ./spark-class org.apache.spark.deploy.worker.Worker \
+        --webui-port 8080 \
+        spark://open-data-pipeline-spark-master:7077 \
+        --properties-file /opt/spark/conf/spark-defaults.conf \
+        >> /opt/spark/logs/spark-worker.log 2>&1
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+    depends_on:
+      open-data-pipeline-spark-master:
+        condition: service_healthy
+
+  ####### Ollama #######
+  open_data_pipeline_ollama:
+    # container_name: open_data_pipeline_ollama
+    image: ollama/ollama:${OLLAMA_VERSION:-0.3.3}
+    pull_policy: missing
+    restart: always
+    ports:
+      - ${OLLAMA_PORT:-11434}:11434
+    environment:
+      - OLLAMA_HOST=0.0.0.0:${OLLAMA_PORT:-11434}
+      - OLLAMA_ORIGINS=*
+      - OLLAMA_KEEP_ALIVE=-1
+    volumes:
+      - ./askondata/data/ollama:/root/.ollama
+      - ./opendatapipeline/config/ollama/entrypoint.sh:/entrypoint.sh
+    entrypoint: [ "/usr/bin/bash", "/entrypoint.sh" ]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    healthcheck:
+      test: "bash -c 'cat < /dev/null > /dev/tcp/localhost/${OLLAMA_PORT:-11434}'"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      open-data-pipeline-cluster:
+
+    profiles:
+      - prod
+
+  ####### ASK ON DATA ########
+  open_data_pipeline_api:
+    image: hiee/open-data-pipeline:${ODP_IMAGE_TAG:-dev}
+    # container_name: open_data_pipeline_api
+    pull_policy: always
+    environment:
+      - APP_ENVIRONMENT=${APP_ENVIRONMENT:-prod}
+      - AIRFLOW_USERNAME=${AIRFLOW_USERNAME:-askondata}
+      - AIRFLOW_PASSWORD=${AIRFLOW_PASSWORD:-askondata}
+      - AIRFLOW_HOME=/airflow
+      - OLLAMA_IP=${OLLAMA_IP:-open_data_pipeline_ollama}
+      - API_SERVER_API_KEY=${API_SERVER_API_KEY:-f86e7479e4bcd743b6648d0323703aab}
+      - LLM_EXECUTION_MODE=${LLM_EXECUTION_MODE:-direct}
+      - LLM_PROVIDER=${LLM_PROVIDER:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENAI_MODEL=${OPENAI_MODEL:-}
+      - ANTHROPIC_MODEL=${ANTHROPIC_MODEL:-}
+      - LLM_MODEL=${LLM_MODEL:-}
+      - PYTHONPATH=/app:/app/audit_tracker:/app/core:${PYTHONPATH:-/app}
+    volumes:
+      # - ./askondata/data/airflow:/opt/airflow
+      # - ./askondata/data/spark:/opt/spark
+      - ./opendatapipeline/logs/askondata:/home/askondata/logs
+      - ./askondata_src:/src
+      - ./hadoop_local:/hadoop_local
+      - ./askondata/data/airflow/dags:/airflow/dags
+      - ./inbuilt_modules:/inbuilt_modules
+      - ./spark_server_app:/spark_server_app
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - ../audit_tracker:/app/audit_tracker
+      - ../core:/app/core
+
+    restart: always
+    healthcheck:
+      test: "curl --fail http://localhost:3001/ || exit 1"
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    networks:
+      open-data-pipeline-cluster:
+    depends_on:
+      open_data_pipeline_airflow_webserver:
+        condition: service_healthy
+      open_data_pipeline_mongo_ready:
+        condition: service_completed_successfully
+      # open_data_pipeline_ollama:
+      #   condition: service_health
+    profiles:
+      - dev
+      - prod
+
+  ## LOAD BALANCER ###
+  open_data_pipeline_loadbalancer:
+    image: nginx:latest
+    # container_name: open_data_pipeline_loadbalancer
+    pull_policy: missing
+    ports:
+      - "443:443"
+    healthcheck:
+      test: [ "CMD", "service", "nginx", "status" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./opendatapipeline/config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./opendatapipeline/config/nginx/errors:/usr/share/nginx/html/errors
+      - ./opendatapipeline/config/nginx/ssl/askondata.key:/etc/nginx/ssl/askondata.key
+      - ./opendatapipeline/config/nginx/ssl/askondata.cert:/etc/nginx/ssl/askondata.cert
+      - ./opendatapipeline/config/nginx/ssl/pass.txt:/etc/nginx/ssl/pass.txt
+    restart: always
+    networks:
+      - open-data-pipeline-cluster
+    depends_on:
+      open_data_pipeline_api:
+        condition: service_started
+    profiles:
+      - dev
+      - prod
+
+### VOLUMES ########
+volumes:
+  spark_home:
+  java_home:
+
+    #### NETWORKS ######
+networks:
+  open-data-pipeline-cluster:
+    driver: bridge

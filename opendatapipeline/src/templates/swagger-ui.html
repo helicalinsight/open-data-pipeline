@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ask On Data API Documentation</title>
+    <link rel="icon" type="image/svg+xml" href="/static/react/images/favicon.svg">
+    <link rel="shortcut icon" href="/static/react/images/favicon.svg">
+
+    <!-- Swagger UI Base CSS -->
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@3.25.0/swagger-ui.css" />
+
+    <!-- Flattop Theme CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-themes@3.0.1/themes/3.x/theme-flattop.css" />
+
+    <!-- Ubuntu Font -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+        rel="stylesheet" />
+
+    <style>
+        /* Custom overrides for Flattop theme */
+        body {
+            font-family: "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        /* Hide unwanted elements - KEEP AUTHORIZATION INTACT */
+        .swagger-ui .topbar .download-url-wrapper .select-label {
+            display: none !important;
+        }
+
+        .swagger-ui .topbar .download-url-wrapper input[type="text"] {
+            display: none !important;
+        }
+
+        .swagger-ui .topbar .download-url-wrapper .download-url-button {
+            display: none !important;
+        }
+
+        /* Hide servers section */
+        .swagger-ui .servers {
+            display: none !important;
+        }
+
+        /* Hide swagger.json link in info section */
+        .swagger-ui .info .link {
+            display: none !important;
+        }
+
+        /* DO NOT HIDE AUTH WRAPPER - Keep it functional */
+        .swagger-ui .auth-wrapper {
+            padding: 0px !important;
+            background: transparent !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        .swagger-ui .info .base-url {
+            display: none !important;
+        }
+
+        .swagger-ui {
+            font-family: "Ubuntu" !important;
+        }
+
+        .swagger-ui .scheme-container {
+            margin: -135px 0px 0px !important;
+        }
+
+        /* Style the original authorize button to match flattop theme */
+        .swagger-ui .authorize.unlocked {
+            background: #152A4F !important;
+            /* Flattop green */
+            color: white !important;
+            border: none !important;
+            border-radius: 4px !important;
+            padding: 8px 16px !important;
+            font-weight: 500 !important;
+            font-family: "Ubuntu" !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .swagger-ui .authorize.unlocked:hover {
+            background: #152A4F !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(137, 191, 4, 0.3);
+        }
+
+        /* Style the authorize button icon */
+        .swagger-ui .authorize.unlocked svg {
+            fill: white !important;
+        }
+
+        .swagger-ui .btn.authorize svg {
+            fill: white !important;
+        }
+
+        /* Custom styling for info section */
+        .swagger-ui .info {
+            margin: 0px -1px 16px -26px !important;
+            padding: 30px;
+        }
+
+        .swagger-ui .info .title {
+            font-size: 21px !important;
+            font-weight: 500 !important;
+            font-family: "Ubuntu" !important;
+            margin: 0 0 16px 0 !important;
+        }
+
+        .swagger-ui .authorize.unlocked {
+            background: #152A4F !important;
+        }
+
+        /* Override flattop topbar to match your branding */
+        .swagger-ui .topbar {
+            background: #152A4F !important;
+            /* Flattop green */
+        }
+
+        .swagger-ui .topbar .link {
+            font-family: "Ubuntu" !important;
+            font-weight: 700 !important;
+        }
+
+        /* Style operation blocks with flattop colors */
+        .swagger-ui .opblock.opblock-post {
+            border-left: 5px solid #152A4F;
+        }
+
+        .swagger-ui .opblock.opblock-get {
+            border-left: 5px solid #152A4F;
+        }
+
+        .swagger-ui .opblock.opblock-put {
+            border-left: 5px solid #152A4F;
+        }
+
+        .swagger-ui .opblock.opblock-delete {
+            border-left: 5px solid #152A4F;
+        }
+
+        .swagger-ui .opblock.opblock-patch {
+            border-left: 5px solid #152A4F;
+        }
+
+        .swagger-ui .opblock.opblock-patch .opblock-summary-method {
+            background: #F28E1E !important;
+        }
+
+        .swagger-ui .opblock.opblock-post .opblock-summary-method {
+            background: #152A4F !important;
+        }
+
+        .swagger-ui .opblock.opblock-get .opblock-summary-method {
+            background: #1a7e1a !important;
+        }
+
+        .swagger-ui .opblock.opblock-delete .opblock-summary-method {
+            background: #a61a1a !important;
+        }
+
+        /* Style other buttons to match flattop */
+        .swagger-ui .btn {
+            background: #152A4F !important;
+            border: none !important;
+            border-radius: 4px !important;
+            color: white !important;
+            font-weight: 500 !important;
+            font-family: "Ubuntu" !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .swagger-ui .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(137, 191, 4, 0.3);
+        }
+
+        /* Ensure auth modal styling matches */
+        .swagger-ui .modal-ux {
+            background: rgba(0, 0, 0, 0.8) !important;
+        }
+
+        .swagger-ui a.nostyle {
+            font-size: 16px !important;
+        }
+
+        .swagger-ui .dialog-ux .modal-ux {
+            background: white !important;
+        }
+
+        .swagger-ui textarea {
+            background: #152A4F !important;
+            color: #ffffff !important;
+        }
+
+        .swagger-ui .modal-ux-content {
+            border-radius: 8px !important;
+            font-family: "Ubuntu" !important;
+        }
+
+        .swagger-ui .markdown code,
+        .swagger-ui .renderedMarkdown code {
+            color: #152A4F !important;
+        }
+
+        .swagger-ui .auth-btn-wrapper .btn-done {
+            background: #152A4F !important;
+            border-color: #152A4F !important;
+            margin-left: 10px !important;
+        }
+
+        .swagger-ui .opblock-body pre.microlight {
+            background: #152A4F !important;
+            color: #ffffff !important;
+        }
+
+        .swagger-ui .opblock-body pre {
+            background: #ffffff !important;
+            color: #152A4F !important;
+            border-color: #ffffff !important;
+        }
+
+        .swagger-ui .auth-btn-wrapper .btn-done:hover {
+            background: #152A4F !important;
+            border-color: #152A4F !important;
+        }
+    </style>
+</head>
+
+<body data-app-env="{{ app_env | e }}">
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@3.25.0/swagger-ui-bundle.js"></script>
+    <script>
+        SwaggerUIBundle({
+            url: '/api/v1/swagger.json',
+            dom_id: '#swagger-ui',
+            presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.presets.standalone],
+            displayRequestDuration: true,
+            displayOperationId: false,
+            docExpansion: 'list'
+            // NO onComplete function - let Swagger UI handle everything naturally
+        });
+    </script>
+
+    <script>
+    (function () {
+    const container = document.getElementById('swagger-ui');
+
+    const norm = (s) => (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const isHeader = (el) =>
+        !!el && (
+        el.classList.contains('opblock-section-header') ||
+        el.classList.contains('responses-header') ||
+        el.classList.contains('responses-title') ||
+        el.tagName === 'H4' || el.tagName === 'H5'
+        );
+
+    function nextMatch(el, selector) {
+        let n = el && el.nextElementSibling;
+        while (n && !n.matches(selector)) n = n.nextElementSibling;
+        return n;
+    }
+
+    function hideStaticResponses(op) {
+        const wrapper = op.querySelector('.responses-wrapper');
+        if (!wrapper) return;
+
+        const liveTable = wrapper.querySelector('.responses-table.live-responses-table');
+
+        //Hide all STATIC response tables
+        wrapper.querySelectorAll('.responses-table').forEach(tbl => {
+        if (!tbl.classList.contains('live-responses-table')) {
+            tbl.style.display = 'none';
+
+            // Hide any controls/content-type tied to this static table
+            let prev = tbl.previousElementSibling;
+            if (prev && (prev.classList.contains('response-controls') || prev.classList.contains('content-type'))) {
+            prev.style.display = 'none';
+            // Hide header immediately above those controls if it's the generic "Responses"
+            let h = prev.previousElementSibling;
+            if (isHeader(h) && norm(h.textContent) === 'responses') h.style.display = 'none';
+            }
+
+            // Also hide a header directly above the static table if it's the generic "Responses"
+            let headerUp = tbl.previousElementSibling;
+            while (headerUp && !isHeader(headerUp)) headerUp = headerUp.previousElementSibling;
+            if (isHeader(headerUp) && norm(headerUp.textContent) === 'responses') headerUp.style.display = 'none';
+        }
+        });
+
+        //  Hide any stray bottom "Responses" headers that remain (those that come AFTER the live table)
+        if (liveTable) {
+        wrapper.querySelectorAll('.opblock-section-header, .responses-header, .responses-title, h4, h5')
+            .forEach(h => {
+            const txt = norm(h.textContent);
+            if (txt === 'responses') {
+                // If this header is positioned AFTER the live table, hide it
+                const pos = h.compareDocumentPosition(liveTable);
+                const headerIsAfterLive = !!(pos & Node.DOCUMENT_POSITION_PRECEDING);
+                if (headerIsAfterLive) h.style.display = 'none';
+            }
+            });
+
+        //  Ensure the live "Server response" header stays visible (some themes collapse it)
+        // Walk backwards a few siblings from the live table to find its header and re-show it if needed.
+        let hdr = liveTable.previousElementSibling, hops = 6;
+        while (hdr && hops-- > 0 && !isHeader(hdr)) hdr = hdr.previousElementSibling;
+        if (isHeader(hdr) && /server\s*response/i.test(hdr.textContent)) hdr.style.display = '';
+        }
+
+        //  Hide any response-controls/content-type NOT tied to the live table
+        wrapper.querySelectorAll('.response-controls, .content-type').forEach(ctrl => {
+        const nextTbl = nextMatch(ctrl, '.responses-table');
+        if (!nextTbl || !nextTbl.classList.contains('live-responses-table')) ctrl.style.display = 'none';
+        });
+    }
+
+    function runAll() {
+        document.querySelectorAll('.opblock').forEach(hideStaticResponses);
+    }
+
+    const mo = new MutationObserver(runAll);
+    mo.observe(container, { childList: true, subtree: true });
+    setTimeout(runAll, 120);
+    setTimeout(runAll, 400);
+    setTimeout(runAll, 1200);
+    })();
+    </script>
+
+
+    <script>
+    /**
+     * ENV-based endpoint hider for Swagger UI (safe with collapsed tags)
+     * - PROD: hide /login and /register (and /api/v1 variants)
+     * - DEV/TEST: hide /googleauth/login (and /api/v1 variant)
+     * - Uses <body data-app-env="prod|dev|test"> or window.APP_ENV
+     * - Only hides a tag section if ALL its ops were hidden by ENV (won't vanish on collapse)
+     */
+    (function () {
+    const container = document.getElementById('swagger-ui');
+
+    // Resolve environment
+    const ENV_FROM_BODY = document.body?.dataset?.appEnv;
+    const ENV = (ENV_FROM_BODY || window.APP_ENV || 'dev').toLowerCase();
+
+    // Exact path regexes (allow optional /api/v1/ prefix)
+    const reLogin           = /^\/(?:api\/v1\/)?login(?:\b|$)/i;
+    const reRegister        = /^\/(?:api\/v1\/)?register(?:\b|$)/i;
+    const reGoogleAuthLogin = /^\/(?:api\/v1\/)?googleauth\/login(?:\b|$)/i;
+
+    // Which to hide per env
+    const HIDE_PREDICATE = {
+        prod: (m, p) => m === 'post' && (reLogin.test(p) || reRegister.test(p)),
+        dev:  (m, p) => m === 'post' &&  reGoogleAuthLogin.test(p),
+        test: (m, p) => m === 'post' &&  reGoogleAuthLogin.test(p),
+    }[ENV] || (() => false);
+
+    // Remove zero-width characters & normalize spaces
+    function normalizePath(raw) {
+        if (!raw) return '';
+        return raw
+        .normalize('NFKC')
+        .replace(/[\u200B-\u200D\uFEFF\u2060\u00A0]/g, '') // invisible chars
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    // Extract the displayed path
+    function extractPath(op) {
+        const pathEl = op.querySelector('.opblock-summary-path');
+        if (!pathEl) return '';
+        const a = pathEl.querySelector('a');
+        const raw = (a && (a.textContent || a.innerText)) || (pathEl.textContent || pathEl.innerText) || '';
+        const norm = normalizePath(raw);
+        return { raw, norm };
+    }
+
+    function markVisibility(op, hidden) {
+        if (hidden) {
+        op.style.display = 'none';
+        op.dataset.hiddenByEnv = '1';   // mark as filtered by env
+        } else {
+        op.style.removeProperty('display');
+        delete op.dataset.hiddenByEnv;  // NOT filtered by env
+        }
+    }
+
+    function hideOps() {
+        const blocks = document.querySelectorAll('.opblock');
+        blocks.forEach(op => {
+        const methodEl = op.querySelector('.opblock-summary-method');
+        if (!methodEl) return;
+        const method = (methodEl.textContent || '').trim().toLowerCase();
+        const { norm } = extractPath(op);
+        const shouldHide = HIDE_PREDICATE(method, norm);
+        markVisibility(op, shouldHide);
+        });
+
+        // Hide a tag section ONLY if every op inside it is hidden-by-env.
+        document.querySelectorAll('.opblock-tag-section').forEach(tag => {
+        const ops = Array.from(tag.querySelectorAll('.opblock'));
+        if (!ops.length) {
+            // If Swagger hasn't rendered children yet, keep the tag visible.
+            tag.style.removeProperty('display');
+            return;
+        }
+        const allHiddenByEnv = ops.every(op => op.dataset.hiddenByEnv === '1');
+        if (allHiddenByEnv) {
+            tag.style.display = 'none';
+        } else {
+            tag.style.removeProperty('display');
+        }
+        });
+    }
+
+    // Re-run on re-renders
+    const mo = new MutationObserver(hideOps);
+    if (container) mo.observe(container, { childList: true, subtree: true });
+
+    setTimeout(hideOps, 100);
+    setTimeout(hideOps, 400);
+    setTimeout(hideOps, 1200);
+    })();
+    </script>
+
+
+    <!-- JSON-only guard for POST /upload_config -->
+    <script>
+    (function () {
+      const container = document.getElementById('swagger-ui');
+
+      function enforceJsonForUploadConfig() {
+        // Look through all rendered operations
+        document.querySelectorAll('.opblock').forEach(op => {
+          const methodEl = op.querySelector('.opblock-summary-method');
+          const pathEl   = op.querySelector('.opblock-summary-path');
+          if (!methodEl || !pathEl) return;
+
+          const method = methodEl.textContent.trim().toLowerCase();
+          const path   = (pathEl.textContent || '').trim();
+
+          // Only apply to POST /upload_config (also handles /api/v1/upload_config)
+          if (method !== 'post') return;
+          if (!(path === '/upload_config' || path.endsWith('/upload_config'))) return;
+
+          // Find the file chooser(s) and restrict to JSON
+          op.querySelectorAll('input[type="file"]').forEach(input => {
+            input.setAttribute('accept', 'application/json,.json'); // browser filter
+
+            // Avoid double-binding
+            if (input.dataset.jsonGuardAttached) return;
+            input.dataset.jsonGuardAttached = '1';
+
+            input.addEventListener('change', () => {
+              const f = input.files && input.files[0];
+              if (!f) return;
+
+              const nameOk = /\.json$/i.test(f.name || '');
+              const typeOk = (f.type || '').toLowerCase().includes('json');
+
+              if (!nameOk && !typeOk) {
+                input.value = '';
+
+
+                const host = input.closest('.parameters') || input.closest('.parameters-container') || op;
+                let msg = host.querySelector('.json-only-warning');
+                if (!msg) {
+                  msg = document.createElement('div');
+                  msg.className = 'json-only-warning';
+                  msg.textContent = 'Only JSON credentials are accepted for this endpoint. Please upload a .json file.';
+                  msg.style.color = '#a61a1a';
+                  msg.style.fontWeight = '600';
+                  msg.style.marginTop = '6px';
+                  msg.style.fontSize = '13px';
+                  host.appendChild(msg);
+                  setTimeout(() => { if (msg && msg.parentNode) msg.parentNode.removeChild(msg); }, 4000);
+                }
+              }
+            });
+          });
+        });
+      }
+
+      const rerunJsonGuard = () => enforceJsonForUploadConfig();
+      const mo2 = new MutationObserver(rerunJsonGuard);
+      mo2.observe(container, { childList: true, subtree: true });
+
+      setTimeout(rerunJsonGuard, 100);
+      setTimeout(rerunJsonGuard, 400);
+      setTimeout(rerunJsonGuard, 1200);
+    })();
+    </script>
+    
+</body>
+
+</html>

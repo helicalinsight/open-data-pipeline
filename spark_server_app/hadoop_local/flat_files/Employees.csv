@@ -1,0 +1,6 @@
+employee_id,first_name,last_name,department_id,salary_id
+1,'John','Doe',101,1
+2,'Jane','Smith',102,2
+3,'Bob','Johnson',101,3
+4,'Alice','Brown',103,4
+5,'Charlie','Davis',102,5

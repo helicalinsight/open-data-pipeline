@@ -1,0 +1,28 @@
+.msgs-text {
+  padding: 6px 12px;
+  background: #fafafa; 
+  border: #f0f0f0;
+  border-radius: 6px;
+  font-size: 12px !important;
+  display: flex;
+  align-items: center;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+/* Icon colors */
+.msgs-text.success svg {
+  color: #52c41a;
+}
+
+.msgs-text.error svg {
+  color: #ff4d4f;
+}
+
+.msgs-text.info svg {
+  color: #F28E1E;
+}
+
+.msgs-text.warning svg {
+  color: #F28E1E;
+}

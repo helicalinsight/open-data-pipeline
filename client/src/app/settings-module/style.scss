@@ -1,0 +1,123 @@
+.settings-section {
+  &__header {
+    padding: 16px 16px 0px 16px;
+    &-subhead {
+      color: grey;
+      font-size: 12px;
+    }
+  }
+  &__tabs {
+    padding: 0px 16px;
+  }
+
+  &__preferences {
+    &-details {
+      margin-top: 15px;
+    }
+    &-subhead {
+      color: grey;
+      font-size: 12px;
+    }
+    &-custom-input {
+      margin-top: 12px;
+      input {
+        width: auto;
+      }
+    }
+    .file-input {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }  
+  }
+}
+.settings-section__tabs .ant-tabs .ant-tabs-tab {
+  font-size: 12px;
+}
+.radio-btn .ant-radio-wrapper {
+  font-size: 12px;
+}
+
+.info-text {
+  padding: 6px 12px;
+  margin-right: 10px;
+  margin-top: 10px;
+  background: #fafafa;
+  border: #f0f0f0;
+  border-radius: 6px;
+  font-size: 12px !important;
+}
+// profile
+.header {
+  display: flex;
+  justify-content: flex-end; 
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.delete-icon {
+  cursor: pointer;
+}
+.ant-form-item-explain{
+  font-size: 12px !important;
+}
+.form-card {
+  background-color: #fafafa !important;
+  margin-bottom: 10px; 
+}
+.form-container {
+  background: #fafafa;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.form-fields {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.form-item {
+  flex: 1;
+  min-width: 180px;
+  margin-bottom: 4px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.button-group button {
+  margin-left: 6px;
+}
+
+/* Documentation.css */
+.documentation-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.documentation-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: disc;
+  padding-left: 16px;
+}
+
+.documentation-link {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.documentation-link-icon {
+  font-size: 12px;
+}
+

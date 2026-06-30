@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333333;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            color: #ffffff;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            margin-top: 20px;
+        }
+        .content h2 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+        .content p {
+            margin-bottom: 10px;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #777777;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            {% if status == 'success' %}
+                <h1 style="background-color: #28a745;">✔ Job {{ status }}!</h1>
+            {% else %}
+                <h1 style="background-color: red;">✖ Job failed!</h1>
+            {% endif %}
+        </div>
+        <div class="content">
+            <p><strong>Job Name:</strong> {{ job_name }}</p>
+            <p><strong>Schedule Name:</strong> {{ schedule_name }}</p>
+            <p><strong>Job Execution Time:</strong> {{ execution_date }}</p>
+        </div>
+        <div class="footer">
+            <p>This is an automated message. Please do not reply.</p>
+        </div>
+    </div>
+</body>
+</html>
