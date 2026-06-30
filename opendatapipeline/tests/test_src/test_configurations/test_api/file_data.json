@@ -1,0 +1,12 @@
+{
+  "_id": "65c5d2cefee7b0b84d7d4867",
+  "user_id": "65365001d9654d9ec1172f87",
+  "files": [
+    {
+      "file_id": "c28a8f59-e57b-4983-8911-83474ad2c4c9",
+      "file_name": "Enrollments",
+      "file_path": "65365001d9654d9ec1172f87/source/flat_files/Enrollments.csv",
+      "json_path": "65365001d9654d9ec1172f87\\.sample\\Enrollments.json"
+    }
+  ]
+}

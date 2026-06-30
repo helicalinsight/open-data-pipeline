@@ -1,0 +1,185 @@
+@import "../../scss/variables.scss";
+
+.job-schedule-list {
+  padding: 1rem;
+  margin: 5px;
+
+  .info-container {
+    padding: 0 12px;
+    margin-right: 10px;
+    background: #fafafa;
+    border: #f0f0f0;
+    border-radius: 6px;
+    font-size: 12px;
+  }
+
+  .job-runs-btn {
+    button {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .success-btn {
+      border-color: green;
+      color: green;
+    }
+
+    .failed-btn {
+      border-color: red;
+      color: red;
+    }
+
+    .running-btn {
+      border-color: blue;
+      color: blue;
+    }
+  }
+
+  .alert-dags {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .spinner {
+    height: 80vh;
+  }
+
+  .ant-switch.ant-switch-checked {
+    background-color: $primaryColor_1;
+  }
+
+  .ant-switch.ant-switch-checked:hover {
+    background-color: rgb(207, 120, 22);
+  }
+}
+
+.individual-job {
+  padding: 1rem;
+
+  p {
+    color: $primaryColor_1;
+    font-weight: 800;
+  }
+
+  .dag-name {
+    margin: 1rem 0;
+  }
+
+  .job-status {
+    margin: 0 2px;
+
+    .status-box {
+      border-radius: 20%;
+      background: red;
+      width: 15px;
+      height: 15px;
+      margin-bottom: 0.7rem;
+    }
+  }
+}
+
+.logs {
+  font-size: 10px;
+  // background-color: #f0f0f0;
+  // padding: 1rem 1.5rem;
+  width: inherit;
+  overflow: auto;
+  height: 100%;
+}
+
+.ant-drawer.log-viewer .ant-drawer-body {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  padding: 10px;
+  overflow: auto;
+}
+.spinner-main {
+  min-height: 35vh;
+}
+
+.schedule-jobs.ant-table-wrapper .ant-table {
+  font-size: 10px !important;
+}
+
+.schedule-jobs .ant-pagination{
+  font-size: 10px !important;
+}
+
+.ant-drawer .ant-drawer-title {
+  font-size: 12px !important
+}
+
+.pf-v6-c-log-viewer {
+  --pf-v6-c-log-viewer__main--BackgroundColor: none
+}
+
+* {
+  scrollbar-color: initial;
+  /* Resets to browser default */
+}
+
+.pf-v6-c-check {
+  accent-color: #152a4f;
+}
+
+.pf-v6-c-text-input-group {
+  --pf-v6-c-text-input-group--m-hover--BorderColor: none;
+}
+.rotate {
+  animation: spin 1s linear infinite;
+}
+.dataSourceUsageContainer {
+  white-space: pre-wrap;
+}
+
+.dataSourceItem {
+  margin-bottom: 1em;
+}
+
+.jobArgumentsContainer {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.jobArgumentItem {
+  margin-bottom: 4px;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.individual-jobs {
+  .ant-select {
+    .ant-select-arrow {
+      height: 5px !important;
+      margin-top: -6px !important;
+      font-size: 10px !important;
+    }
+    &:not(.ant-select-customize-input) .ant-select-selector,
+    &.ant-select-single .ant-select-selector {
+      height: 18px !important;
+      font-size: 10px !important;
+    }
+  }
+  .ant-select-dropdown .ant-select-item {
+    font-size: 10px !important;
+  }
+}
+.schedule-filter .ant-input-affix-wrapper {
+  font-size:12px !important
+}
+.schedule-state .ant-checkbox-wrapper {
+  font-size: 12px !important
+}
+
+ .schedule-filter .ant-select-outlined:not(.ant-select-customize-input) .ant-select-selector {
+    height: 24px !important;
+}
+ .schedule-filter .ant-select-dropdown .ant-select-item {
+    font-size: 10px !important;
+}

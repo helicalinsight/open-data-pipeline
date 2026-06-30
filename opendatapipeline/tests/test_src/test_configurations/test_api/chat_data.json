@@ -1,0 +1,53 @@
+{
+  "_id": "65cb43f2007a5f38718b9d6a",
+  "user_id": "65365001d9654d9ec1172f87",
+  "session_id": "6544cb81d335bb2189b06e01",
+  "chat_name": "Table read and export file",
+  "history": [
+    {
+      "id": "a4ad159d-77a0-4df0-b118-36f94d1870e1",
+      "step": 1,
+      "status": "PASS",
+      "function": "read_tables",
+      "parameters": [
+        {
+          "table_name": "testing_data.order_info",
+          "connection_id": "65c350194545a585f675ab46",
+          "source_id": "65cca96e00df89a55668f3df"
+        }
+      ]
+    },
+    {
+      "id": "f1a2de26-1351-45bf-9e26-34a01abb8e81",
+      "step": 2,
+      "status": "PASS",
+      "function": "add_columns",
+      "parameters": {
+        "groups": [
+          {
+            "column": [
+              "customer_id_2"
+            ],
+            "default": 1
+          }
+        ],
+        "source_id": "65cca96e00df89a55668f3df"
+      }
+    },
+    {
+      "function": "export",
+      "id": "0952bacc-b39c-48f6-9c75-5825e89bfa3a",
+      "parameters": [
+        {
+          "source_id": "65cca96e00df89a55668f3df",
+          "file_name": "output1.csv"
+        }
+      ],
+      "status": "PASS",
+      "step": 3
+    }
+  ],
+  "files": [
+    "65cca96e00df89a55668f3df"
+  ]
+}

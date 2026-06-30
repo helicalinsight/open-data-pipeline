@@ -1,0 +1,49 @@
+  - id: 5ad91440-0f15-428f-9b50-cd5b0f3ea2e3
+    step: 0
+    status: PASS
+    function: read_files
+    parameters:
+      file_id: fd85ee69-46f5-438b-a1b0-1b4f9581f6f1
+      file_name: Students
+      source_id: 6651805f1577224b6b08aa6d
+    output:
+      source_id: 6651805f1577224b6b08aa6d
+
+  - id: de241ac3-1d8c-4a91-88d3-0f1feec55b02
+    step: 1
+    status: PASS
+    function: read_files
+    parameters:
+      file_id: e8ea0c4d-28c5-4f00-9d69-54a1aee43ffb
+      file_name: Students_1
+      source_id: 6651805f1577224b6b08aa6e
+    output:
+      source_id: 6651805f1577224b6b08aa6e
+
+  - id: 8971541c-8a8d-451f-9d45-77f202e81fa3
+    step: 2
+    status: PASS
+    function: union
+    parameters:
+      groups:
+        - columns: null
+      source_id:
+        - 6651805f1577224b6b08aa6d
+        - 6651805f1577224b6b08aa6e
+      file_names:
+        - Students
+        - Students_1
+      file_id: null
+    output:
+      source_id: 6651809b1577224b6b08aa6f
+
+  - id: 911010e2-4e76-4661-9ff2-ed60f96dc3df
+    step: 3
+    status: PASS
+    function: rename_columns
+    parameters:
+      groups:
+        - old_name: name
+          new_name: full_name
+      file_id: 6651809b1577224b6b08aa6f
+    output: null

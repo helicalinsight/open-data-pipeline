@@ -1,0 +1,113 @@
+@import "../../scss/variables.scss";
+.ad-message-container {
+  bottom: 0;
+  margin: 10px 15px;
+
+  .disabled-cursor {
+    cursor: not-allowed;
+    .monaco-mouse-cursor-text {
+      pointer-events: none;
+    }
+  }
+
+  .monaco-editor .margin {
+    display: none !important;
+  }
+  .monaco-editor .suggest-widget {
+    left: 0 !important;
+  }
+  .monaco-editor {
+    display: flex;
+    background-color: #f0f0f0 !important;
+    .scroll-decoration {
+      box-shadow: none !important;
+    }
+    .overflow-guard {
+      width: 100%;
+      display: flex;
+    }
+    .margin-view-overlays {
+      display: none;
+      width: 0;
+    }
+    .view-overlays .current-line {
+      background: #f0f0f0;
+      border: none !important;
+      background-color: transparent !important;
+    }
+    .decorationsOverviewRuler {
+      display: none !important;
+    }
+    .monaco-editor-background {
+      width: 100%;
+      background-color: #f0f0f0 !important;
+    }
+    .monaco-scrollable-element.editor-scrollable {
+      width: 100% !important;
+      left: 0 !important;
+    }
+  }
+  &__is-typing-box {
+    color: #646f71;
+    font-size: 12px;
+  }
+  &__typing-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    .typing-text {
+      margin-right: 3px;
+    }
+  }
+  &__input-box {
+    font-size: 12px;
+    gap: 8px;
+    background-color: transparent;
+    padding: 8px 0px;
+    margin: 0;
+    font-size: inherit;
+    font-family: inherit;
+    color: inherit;
+    resize: none;
+    outline: none;
+    border-radius: 5px;
+    background: #f0f0f0;
+  }
+}
+.editor-container {
+  background-color: #f0f0f0 !important;
+  padding: 0px 10px;
+  position: relative;
+}
+
+.monaco-placeholder {
+  position: absolute;
+  display: none;
+  white-space: pre-wrap;
+  // top: 8px;
+  left: 8px;
+  pointer-events: none;
+  user-select: none;
+  color: rgba(138, 137, 137, 0.75);
+  font-weight: 100 !important;
+  font-size: 10px;
+  font-weight: lighter;
+}
+
+.editor-container.hide-cursor .monaco-editor .cursor {
+  display: none !important;
+}
+
+.monaco-editor .iPadShowKeyboard {
+  display: none;
+}
+
+.ad-message-container .monaco-editor {
+  outline: none !important;
+}
+
+@media screen and (max-width: 576px) {
+  .ad-message-container {
+    padding: 0 20px 5px 15px;
+  }
+}

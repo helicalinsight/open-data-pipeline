@@ -1,0 +1,28 @@
+@import "../../scss/variables.scss";
+.page-not-found {
+  min-height: 100vh;
+  h1 {
+    color: $primaryColor_1;
+    font-size: 100px;
+    letter-spacing: 6px;
+    line-height: normal;
+  }
+  h4 {
+    text-transform: uppercase;
+    font-size: 34px;
+    letter-spacing: 5px;
+  }
+  p {
+    font-size: 14px;
+    color: #3f4045;
+  }
+  button {
+    background-color: $primaryColor_1;
+    color: $whiteColor;
+    border: none;
+    margin-top: 20px;
+    padding: 0.4rem 2rem;
+    height: 42px;
+    font-size: 18px;
+  }
+}

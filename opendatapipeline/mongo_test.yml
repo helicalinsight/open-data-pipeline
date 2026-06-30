@@ -1,0 +1,42 @@
+services:
+  mongo:
+    restart: 'no'
+    image: mongo:7.0.5
+    container_name: "mongodb"
+    environment:
+      - MONGO_INITDB_DATABASE=user_sessions_test
+    volumes:
+      - ./data/db:/data/db
+      # - ./mongo.sh://mongo.sh
+    ports:
+      - 27017:27017
+    networks:
+      gitlab-runner:
+    command:
+      - /bin/sh
+      - -c
+      - |
+        openssl rand -base64 741 > keyfile 
+        chmod 400 keyfile
+        chown 999:999 keyfile
+        
+        mongod --replSet rs0 --bind_ip_all --auth --keyFile keyfile &
+        MONGOD_PID=$$!
+        
+        sleep 5
+        mongosh --eval "rs.initiate({_id : 'rs0',members: [{ _id: 0 , host: 'localhost:27017'}]})"
+        sleep 2
+        mongosh --eval "db.getSiblingDB('admin').createUser({user: 'root',pwd: 'root',roles: [{ role: 'root', db: 'admin' },{role:'clusterAdmin', db: 'admin'}]})"
+        mongosh -u root -p root  --eval "db.getSiblingDB('user_sessions_test').createUser({user: 'admin',pwd: 'admin',roles: [{ role: 'readWrite', db:'user_sessions_test'}]})"
+        
+        wait $$MONGOD_PID
+       
+        
+        
+        
+networks:
+  gitlab-runner:
+    driver: bridge
+
+        
+        

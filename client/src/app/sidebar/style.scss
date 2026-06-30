@@ -1,0 +1,186 @@
+@import "../../scss/variables.scss";
+
+.sidebar-section {
+  background-color: $primaryColor_2;
+
+  .sidebar-header {
+    height: 12%;
+    margin: 5px 0;
+
+    .ad-title {
+      margin-right: 10px;
+      color: $whiteColor;
+      font-family: Ubuntu;
+      font-size: 29.959px;
+      font-style: normal;
+      font-weight: 300;
+      line-height: normal;
+    }
+
+    .icons-div-sidebar {
+      margin-top: 0.8rem;
+
+      .ant-divider {
+        background-color: $whiteColor;
+        height: 20px;
+        margin: 0rem 1rem;
+      }
+    }
+  }
+
+  .sidebar-collapsed {
+    height: 18%;
+  }
+
+  .actions-container {
+    height: 8%;
+    padding: 5px;
+
+    .search-container {
+      border: 1px solid $whiteColor;
+      border-radius: 4.659px;
+      margin: 3px;
+      height: 35.259px;
+      background-color: $whiteColor;
+    }
+
+    .create-job-button {
+      margin: 3px;
+      height: 35.259px;
+      padding: 9.318px;
+      border-radius: 4.659px;
+    }
+  }
+
+  .jobs-container {
+    height: 82%;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .job-item-container {
+      height: 51px !important;
+      margin: 4px 0;
+
+      .ant-input {
+        border-radius: 0 !important;
+      }
+
+      .selected-job-name {
+        background: linear-gradient(
+          270deg,
+          rgba(255, 255, 255, 0.1) -11.82%,
+          rgba(255, 255, 255, 0.16) -11.81%,
+          rgba(255, 255, 255, 0) 85.82%
+        );
+      }
+
+      .collapsed-selected-job {
+        padding: 15px 0px;
+      }
+
+      .collapsed-job {
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.16);
+        width: 45px;
+        height: 45px;
+        margin: auto 5px;
+      }
+    }
+
+    .job-item-container > *:last-child {
+      margin-bottom: 5px;
+    }
+
+    .no-results {
+      color: $whiteColor;
+      font-size: 12px;
+    }
+
+    .job-name-container {
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.16);
+      margin: 0 5px;
+      padding: 10px;
+      height: 51px;
+    }
+
+    .job-name {
+      color: $whiteColor;
+      font-size: 12px;
+      line-height: normal;
+    }
+
+    .job-name::after {
+      color: $whiteColor;
+    }
+  }
+
+  .not-selected-job {
+    height: 35px;
+    width: 5px;
+    border-radius: 0px 7px 7px 0px;
+    background: transparent;
+  }
+
+  .selected-job {
+    background-color: $primaryColor_1;
+    box-shadow: 0px 2px 15px 0px rgba(51, 128, 244, 0.4);
+  }
+
+  .buttons-container {
+    width: 30%;
+    padding: 2px;
+    justify-content: space-around;
+  }
+
+  .sidebar-footer-container {
+    height: 7%;
+    padding: 10px;
+
+    .profile-avtar {
+      width: 28px;
+      height: 28px;
+    }
+
+    .user-name {
+      color: $whiteColor;
+      font-style: normal;
+    }
+  }
+
+  .version {
+    color: $whiteColor;
+    font-size: 10px;
+  }
+}
+.minimize-menu {
+  display: flex;
+  margin-left: 30px;
+}
+.double-left {
+  color: white;
+  margin-top: 3px;
+}
+// .circle-with-tip {
+//   width: 16px;
+//   height: 18.533px;
+//   flex-shrink: 0;
+//   background-color: #096dd9;
+//   border-radius: 50%;
+//   position: relative;
+//   color: #ffffff;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+// }
+
+// .circle-tip {
+//   position: absolute;
+//   bottom: -3px;
+//   left: 50%;
+//   transform: translateX(-50%);
+//   width: 5px;
+//   height: 5px;
+//   background-color: #096dd9;
+//   clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+// }

@@ -1,0 +1,6 @@
+@import "../../scss/variables.scss";
+.blurred-icon {
+  filter: blur(0.6px);
+  cursor: not-allowed !important;
+  color: $primaryColor_1 !important;
+}

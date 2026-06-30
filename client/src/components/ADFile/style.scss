@@ -1,0 +1,36 @@
+.file-button-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border: none;
+  width: 120px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #428485;
+  border-radius: 15px;
+  padding: 5px 10px;
+  .image {
+    margin-right: 4px;
+  }
+}
+
+.file-name-input {
+  outline: none;
+  border: none;
+  height: 19px;
+  background-color: transparent;
+  border-bottom: 1px solid black;
+  border-radius: 0;
+  padding: 0;
+}
+
+.file-name-input:focus {
+  outline: none !important;
+}
+
+.edit-icon {
+  margin-left: 5px;
+}
+.icon-size{
+  width : 8px;
+}

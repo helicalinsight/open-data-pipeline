@@ -1,0 +1,13 @@
+.follow-up-prompt {
+    margin: 5px 0;
+    &__tag-item {
+        max-width: fit-content;
+        border-radius: 10px;
+        font-size: 12px;
+        border: 1px solid #CECECE;
+        background: rgba(183, 252, 218, 0.00);
+    }
+    &__tag-item:hover {
+        background-color: #f0f0f0;
+    }
+}

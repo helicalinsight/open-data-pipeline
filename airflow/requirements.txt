@@ -1,0 +1,16 @@
+#install First one manually.
+#"apache-airflow==2.7.3" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.7.3/constraints-3.10.txt"
+python-dotenv
+apache-airflow-providers-apache-spark==4.5.0
+pyspark==3.3.3
+pymongo==4.6.1
+sqlglot
+pandas
+pyarrow
+gspread==6.1.2
+google-api-python-client
+pytz
+oauth2client
+fuzzywuzzy==0.18.0
+numpy==1.24.4
+openpyxl==3.1.2

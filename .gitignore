@@ -1,0 +1,38 @@
+.idea/git.iml
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
+.vscode/
+flask_analytics/api/analytics/__pycache__/analytics.cpython-37.pyc
+flask_analytics/api/analytics/__pycache__/test_analytics.cpython-37.pyc
+# **/database_local
+flask_user_management/database_local
+flask_user_management/api/database_local
+.idea/
+.pyenv/
+
+#Client
+**/node_modules
+client/node_modules
+client/coverage
+client/build
+client/npm-debug.log*
+*.pyc
+__pycache__/
+.tar.gz
+askondata/src/api/static
+askondata/src/api/templates
+rasachatbot/models
+
+# others
+.planning/
+.tasks/
+.windsurfrules
+
+# Google Sheet credentials
+spark_server_app/spark_server/database_connectors/connector_jars/googlesheet/gsforaod-local.json
+askondata/tests/test_src/test_configurations/test_hooks/google_sheets_creds-local.json
+askondata/tests/test_src/test_configurations/test_hooks/databricks_creds-local.json
+askondata/tests/test_src/test_configurations/test_hooks/s3_creds-local.json
