@@ -1,11 +1,3 @@
-### Project Title
-
-NLP
-
-### About Project
-
-Description of Project here.
-
 ### Technologies used
 
 - React
