@@ -442,7 +442,7 @@ services:
       # - ./askondata/data/airflow:/opt/airflow
       # - ./askondata/data/spark:/opt/spark
       - ./opendatapipeline/logs/askondata:/home/askondata/logs
-      - ./askondata_src:/src
+      - ./opendatapipeline_src:/src
       - ./hadoop_local:/hadoop_local
       - ./askondata/data/airflow/dags:/airflow/dags
       - ./inbuilt_modules:/inbuilt_modules
