@@ -65,8 +65,8 @@ docker compose --profile dev --env-file .env up -d
 OpenDataPipeline simplifies the modern data stack by unifying:
 - **Frontend**: React-based UI for seamless pipeline management.
 - **Orchestration**: Apache Airflow scheduler and webserver.
-- **Data Compute**: Apache Spark
-- **Metadata Storage**: MongoDB and PostgreSQL.
+- **Data Compute**: Apache Spark, DLT, Pandas
+- **Metadata Storage**: MongoDB
 
 ## Documentation
 
