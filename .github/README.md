@@ -8,77 +8,37 @@ The easiest way to get started with OpenDataPipeline is by using our managed pro
 
 If you prefer to host it yourself, OpenDataPipeline can be set up locally using Docker. Our local setup spins up an Airflow webserver, a Spark cluster, and MongoDB — everything you need for robust data operations.
 
-To set up OpenDataPipeline locally:
-
 \# Note: The commands assume you are in the root folder of cloned repository.
 
 1. **Prerequisites**: Ensure you have [Docker](https://www.docker.com/) (v24+) and [Node.js](https://nodejs.org/) (v18+) installed.
 
-2. **Build the Frontend (FE)**:
-   Before deploying the containers, compile the frontend application:
-   ```bash
-   cd client
-   export REACT_APP_SERVER_ENVIRONMENT="dev"
-   # Note: (Optional) Ask the administrator for the REACT_APP_CLIENT_ID if Google OAuth is required
-   export REACT_APP_CLIENT_ID=""
-   npm install --force
-   CI=false npm run build
-   cd ..
-   ```
-   This compiles the React assets into `client/build/` and generates the entry template at `templates/index.html`.
+2. **Run script**: We have created an easy to use script for the local setup, you can run it by `bash ./odp_open_source_local_setup.sh`
 
-3. **Configure Environment Variables**:
-   Copy `docker/.env.example` to `docker/.env` 
-   `cp docker/.env.example docker/.env`
+A few notes before you run the script:
 
-4. **Assemble the Environment & Start Services**:
-   Run the following commands from the root of the cloned repository to set up the container directories and launch Docker Compose:
-   ```bash
-   # Define deployment base path (using $HOME ensures proper expansion in double quotes)
-   DEPLOY_BASE="$HOME/odp-local-setup"
-   SETUP_PATH="$DEPLOY_BASE/opendatapipeline"
+a.) You can check out the top configurations in the script to provide custom values
 
-   mkdir -p "$SETUP_PATH"
+b.) Choose your LLM provider, based on your preferences. You can choose from Ollama, OpenAI, Anthropic, or Google Gemini and set API KEY and MODEL in environment variables (by adding at bottom of `docker/.env.example`)
+```
+You can also configure the LLM provider using the following environment variables:
+- `LLM_PROVIDER`: `ollama`, `openai`, `anthropic`, `google`
+- `OPENAI_API_KEY`: Your OpenAI API key
+- `OPENAI_MODEL`: e.g., `gpt-4o`
+- `ANTHROPIC_API_KEY`: Your Anthropic API key
+- `ANTHROPIC_MODEL`: e.g., `claude-3-5-sonnet-20241022`
+- `GOOGLE_API_KEY`: Your Gemini API Key
+- `GOOGLE_MODEL`: Your Gemini model to use
+- `OLLAMA_BASE_URL`: e.g., `http://localhost:11434`
+- `OLLAMA_MODEL`: e.g., `openhermes`
+- `LLM_TEMPERATURE`: e.g., `0`
+- `LLM_MAX_TOKENS`: e.g., `1000`
+```
 
-   # 1. Copy shared dependencies to base folder
-   cp -r odp_code_context "$DEPLOY_BASE/odp_code_context"
-   cp -r audit_tracker "$DEPLOY_BASE/audit_tracker"
-   cp -r core "$DEPLOY_BASE/core"
+c.) If you want to update environment configurations, you can modify `docker/.env.example` for setting your preferences. The example configurations are ready to use if you don't want to set any custom configurations.
 
-   # 2. Copy application components to setup path
-   cp -r opendatapipeline/src "$SETUP_PATH/opendatapipeline_src"
-   cp opendatapipeline/requirements.txt "$SETUP_PATH/opendatapipeline_src/requirements.txt"
-   cp opendatapipeline/pyproject.toml "$SETUP_PATH/opendatapipeline_src/pyproject.toml"
-   cp opendatapipeline/setup.cfg "$SETUP_PATH/opendatapipeline_src/setup.cfg"
-   cp opendatapipeline/setup.py "$SETUP_PATH/opendatapipeline_src/setup.py"
-   cp -r airflow "$SETUP_PATH/airflow"
-   cp -r spark_server_app "$SETUP_PATH/spark_server_app"
-   cp -r dlt_server_app "$SETUP_PATH/dlt_server_app"
-   cp -r opendatapipeline/hadoop_local "$SETUP_PATH/hadoop_local"
-   cp -r opendatapipeline/inbuilt_modules "$SETUP_PATH/inbuilt_modules"
-   cp -r docker/opendatapipeline "$SETUP_PATH/opendatapipeline"
+The script should take about 5-20 minutes to run depending on your machine and internet speed.
 
-   # 3. Copy Frontend (FE) build and templates
-   mkdir -p "$SETUP_PATH/opendatapipeline_src/api/static/react"
-   cp -r client/build/. "$SETUP_PATH/opendatapipeline_src/api/static/react"
-   cp -r templates "$SETUP_PATH/opendatapipeline_src/api/templates"
-
-   # 4. Copy configuration and Docker files
-   cp docker/.env "$SETUP_PATH/.env"
-   cp docker/docker-compose.yml "$SETUP_PATH/docker-compose.yml"
-   cp docker/airflow_docker.Dockerfile "$SETUP_PATH/airflow_docker.Dockerfile"
-
-   # 5. Prepare Airflow DAGs directory structure
-   mkdir -p "$SETUP_PATH/opendatapipeline/data/airflow"
-   cp -r airflow/dags "$SETUP_PATH/opendatapipeline/data/airflow/dags"
-
-   # 6. Build and start services
-   cd "$SETUP_PATH"
-   docker compose --profile dev build --no-cache
-   docker compose --profile dev up -d
-   ```
-
-5. **Verify the Setup**:
+3. **Verify the Setup**:
    Monitor the container health status:
    ```bash
    watch docker ps

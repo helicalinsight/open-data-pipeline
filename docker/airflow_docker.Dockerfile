@@ -12,4 +12,4 @@ RUN chmod -R 770 /airflow_tmp
 
 RUN chmod -R 770 /airflow
 USER airflow
-RUN  pip install --no-cache-dir -r /airflow_tmp/requirements.txt
+RUN pip install --default-timeout=100 --no-cache-dir -r /airflow_tmp/requirements.txt
