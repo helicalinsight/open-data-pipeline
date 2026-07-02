@@ -22,6 +22,10 @@ jest.mock("@react-oauth/google", () => ({
 jest.mock("../../../utils/userData", () => ({
   setLocalStorageItem: jest.fn(),
 }));
+jest.mock("../../../constants/appConstants", () => ({
+  ...jest.requireActual("../../../constants/appConstants"),
+  CLIENT_ID: "test-client-id",
+}));
 const mockStore = configureStore();
 
 const store = mockStore({
