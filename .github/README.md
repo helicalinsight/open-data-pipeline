@@ -10,7 +10,7 @@ If you prefer to host it yourself, OpenDataPipeline can be set up locally using 
 
 To set up OpenDataPipeline locally:
 
-# Note: The commands assume you are in the root folder of cloned repository.
+\# Note: The commands assume you are in the root folder of cloned repository.
 
 1. **Prerequisites**: Ensure you have [Docker](https://www.docker.com/) (v24+) and [Node.js](https://nodejs.org/) (v18+) installed.
 
@@ -28,13 +28,8 @@ To set up OpenDataPipeline locally:
    This compiles the React assets into `client/build/` and generates the entry template at `templates/index.html`.
 
 3. **Configure Environment Variables**:
-   Copy `docker/.env.example` to `docker/.env` and edit it to fill in the required Airflow credentials (such as SMTP details and Fernet Key):
-   - `AIRFLOW__CORE__FERNET_KEY`
-   - `AIRFLOW__SMTP__SMTP_HOST`
-   - `AIRFLOW__SMTP__SMTP_USER`
-   - `AIRFLOW__SMTP__SMTP_PASSWORD`
-   - `AIRFLOW__SMTP__SMTP_PORT`
-   - `AIRFLOW__SMTP__SMTP_MAIL_FROM`
+   Copy `docker/.env.example` to `docker/.env` 
+   `cp docker/.env.example docker/.env`
 
 4. **Assemble the Environment & Start Services**:
    Run the following commands from the root of the cloned repository to set up the container directories and launch Docker Compose:
