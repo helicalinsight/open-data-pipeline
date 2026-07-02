@@ -6,7 +6,7 @@ import { setLocalStorageItem } from "../../utils/userData";
 import { useNavigate } from "react-router-dom";
 import { userRoutes } from "../../router/uiRouteConstants";
 import { loginApi } from "../../apis/authService";
-import { imagePath } from "../../constants/appConstants";
+import { CLIENT_ID, imagePath } from "../../constants/appConstants";
 import { baseApi } from "../../apis/apiUrlConstants";
 import CustomIcon from "../../components/ADIcons/custom-icon";
 import "./index.scss";
@@ -16,6 +16,24 @@ import { useDispatch, useSelector } from "react-redux";
 
 const isDevEnv = process.env.REACT_APP_SERVER_ENVIRONMENT === "dev";
 const isLocalEnv = process.env.REACT_APP_SERVER_ENVIRONMENT === "local";
+
+const GoogleSignInButton = ({ onSuccess }) => {
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess,
+    onError: (error) => console.log("Login Failed:", error),
+  });
+
+  return (
+    <Button
+      block
+      className="google-btn"
+      onClick={handleGoogleLogin}
+      icon={<CustomIcon name="google" />}
+    >
+      <span>Sign In With Google</span>
+    </Button>
+  );
+};
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -89,11 +107,6 @@ const LoginPage = () => {
     });
   };
 
-  const handleGoogleLogin = useGoogleLogin({
-    onSuccess: (codeResponse) => setUser(codeResponse),
-    onError: (error) => console.log("Login Failed:", error),
-  });
-
   const onFinish = async (values) => {
     try {
       const response = await axios.post(`${baseApi.url}login`, values);
@@ -109,16 +122,6 @@ const LoginPage = () => {
     console.log("Failed:", errorInfo);
   };
 
-  const GoogleSignInButton = () => (
-    <Button
-      block
-      className="google-btn"
-      onClick={handleGoogleLogin}
-      icon={<CustomIcon name="google" />}
-    >
-      <span>Sign In With Google</span>
-    </Button>
-  );
   const handleSignUpNavigation = () => {
     navigate(userRoutes.signup);
   };
@@ -186,13 +189,23 @@ const LoginPage = () => {
                   Sign In
                 </Button>
               </Form.Item>
-              <div className="divider">
-                <span>OR</span>
-              </div>
-              <GoogleSignInButton />
+              {CLIENT_ID && (
+                <>
+                  <div className="divider">
+                    <span>OR</span>
+                  </div>
+                  <GoogleSignInButton
+                    onSuccess={(codeResponse) => setUser(codeResponse)}
+                  />
+                </>
+              )}
             </Form>
           ) : (
-            <GoogleSignInButton />
+            CLIENT_ID && (
+              <GoogleSignInButton
+                onSuccess={(codeResponse) => setUser(codeResponse)}
+              />
+            )
           )}
           {(isDevEnv || isLocalEnv) && (
             <div className="signup-prompt">

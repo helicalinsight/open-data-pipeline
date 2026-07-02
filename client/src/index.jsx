@@ -17,14 +17,20 @@ if (mode && mode === "dev") {
 }
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
+const app = (
+  <Provider store={store}>
+    <ConfigProvider theme={customTheme.light}>
+      <App>
+        <RouterProvider router={router} />
+      </App>
+    </ConfigProvider>
+  </Provider>
+);
+
 root.render(
-  <GoogleOAuthProvider clientId={CLIENT_ID}>
-    <Provider store={store}>
-      <ConfigProvider theme={customTheme.light}>
-        <App>
-          <RouterProvider router={router} />
-        </App>
-      </ConfigProvider>
-    </Provider>
-  </GoogleOAuthProvider>
+  CLIENT_ID ? (
+    <GoogleOAuthProvider clientId={CLIENT_ID}>{app}</GoogleOAuthProvider>
+  ) : (
+    app
+  )
 );
